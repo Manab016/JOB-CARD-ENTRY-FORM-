@@ -20,8 +20,8 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 </div><div class="actions"><button type="submit" id="saveBtn">ডাটা Save করুন</button><button type="button" class="secondary" id="clearBtn">নতুন Entry / Clear</button></div></form>
 <p class="note">একটি মাত্র Sort Number ফিল্ডে 09/100 লিখলে Full Job Card Number স্বয়ংক্রিয়ভাবে WB-09-008-003-009/100 হবে। ডাটা এই ডিভাইসের Browser-এ সংরক্ষিত থাকবে।</p></section>
 <section class="panel"><h2>ডাটা ব্যবস্থাপনা</h2><div class="stats" id="count">মোট রেকর্ড: 0</div>
-<div class="actions"><button class="green" id="exportBtn">📥 Excel Export (CSV)</button><button class="secondary" id="backupBtn">💾 Backup Download (JSON)</button><button class="secondary" id="restoreBtn">♻️ Backup Restore</button><input type="file" id="restoreFile" accept=".json,application/json" hidden><button class="danger" id="resetBtn">সব ডাটা Reset</button></div>
-<p class="note">CSV ফাইল Microsoft Excel-এ খোলা যাবে। Backup JSON ফাইলে সব রেকর্ড থাকবে; পরে Restore করলে ডাটা ফেরত আসবে। নিয়মিত Backup রাখুন।</p></section>
+<div class="actions"><button class="green" id="exportBtn">📥 Excel Export</button><button class="secondary" id="backupBtn">💾 Backup Download (JSON)</button><button class="secondary" id="restoreBtn">♻️ Backup Restore</button><input type="file" id="restoreFile" accept=".json,application/json" hidden><button class="danger" id="resetBtn">সব ডাটা Reset</button></div>
+<p class="note">Excel ফাইলটি A4 পেজ সাইজে সুন্দরভাবে সেট করা আছে, সরাসরি Microsoft Excel-এ খোলা ও প্রিন্ট করা যাবে। Backup JSON ফাইলে সব রেকর্ড থাকবে; পরে Restore করলে ডাটা ফেরত আসবে। নিয়মিত Backup রাখুন।</p></section>
 <section class="panel"><h2>রেকর্ড তালিকা</h2><input class="search" id="search" placeholder="নাম / Short Number / Job Card Number দিয়ে খুঁজুন…"><div class="tablewrap"><table><thead><tr><th>#</th><th>Name</th><th>Job Card Number</th><th>Mobile Number</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table></div></section>
 </main>
 <script>
@@ -45,8 +45,80 @@ $("clearBtn").onclick=()=>{editIndex=-1;$("entryForm").reset();$("saveBtn").text
 window.editRow=i=>{const r=rows[i];$("name").value=r.name;$("shortNumber").value=r.shortNumber;$("mobile").value=r.mobile||"";$("jobPreview").textContent=r.jobCardNumber;editIndex=i;$("saveBtn").textContent="Update করুন";window.scrollTo({top:0,behavior:"smooth"});};
 window.deleteRow=i=>{if(confirm("এই রেকর্ডটি Delete করবেন?")){rows.splice(i,1);if(editIndex===i)editIndex=-1;persist();}};
 $("search").addEventListener("input",render);
-function csvCell(v){return '"'+String(v??"").replace(/"/g,'""')+'"';}
-$("exportBtn").onclick=()=>{const csv="\uFEFF"+[["Name","Short Number","Job Card Number","Mobile Number"],...rows.map(r=>[r.name,r.shortNumber,r.jobCardNumber,r.mobile||""])].map(a=>a.map(csvCell).join(",")).join("\r\n");download(new Blob([csv],{type:"text/csv;charset=utf-8;"}),"Sahara_Booth_2_Export.csv");};
+
+$("exportBtn").onclick=()=>{
+  const maxNameLen=Math.max(12,...rows.map(r=>(r.name||"").length));
+  const maxJobLen=Math.max(22,...rows.map(r=>(r.jobCardNumber||"").length));
+  const wSL=55;
+  const wName=Math.min(280,Math.max(150,Math.round(maxNameLen*8.2)));
+  const wJob=Math.min(240,Math.max(185,Math.round(maxJobLen*8.2)));
+  const wMob=125;
+
+  const tableRows=rows.map((r,idx)=>{
+    const bg=idx%2===1?"#f4f7fc":"#ffffff";
+    return `<tr style="height:24pt;background:${bg};">
+      <td style="text-align:center;vertical-align:middle;border:1px solid #cbd5e1;font-weight:bold;color:#334155;">${idx+1}</td>
+      <td style="text-align:center;vertical-align:middle;border:1px solid #cbd5e1;font-weight:500;color:#0f172a;">${esc(r.name)}</td>
+      <td style="text-align:center;vertical-align:middle;border:1px solid #cbd5e1;mso-number-format:'\\@';color:#1e293b;">${esc(r.jobCardNumber)}</td>
+      <td style="text-align:center;vertical-align:middle;border:1px solid #cbd5e1;mso-number-format:'\\@';color:#1e293b;">${esc(r.mobile||"-")}</td>
+    </tr>`;
+  }).join("");
+
+  const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<!--[if gte mso 9]><xml>
+<x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>
+<x:Name>Sahara Booth 2</x:Name>
+<x:WorksheetOptions>
+<x:Print>
+<x:ValidPrinterInfo/>
+<x:PaperSizeIndex>9</x:PaperSizeIndex>
+<x:HorizontalResolution>600</x:HorizontalResolution>
+<x:VerticalResolution>600</x:VerticalResolution>
+<x:FitWidth>1</x:FitWidth>
+<x:FitHeight>0</x:FitHeight>
+</x:Print>
+<x:PageSetup>
+<x:Layout x:Orientation="Portrait" x:CenterHorizontal="1"/>
+<x:PageMargins x:Bottom="0.4" x:Left="0.35" x:Right="0.35" x:Top="0.4"/>
+</x:PageSetup>
+<x:FitToPage/>
+<x:DoNotDisplayGridlines/>
+</x:WorksheetOptions>
+</x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook>
+</xml><![endif]-->
+<style>
+  @page { size: A4 portrait; margin: 0.4in 0.35in; }
+  table { border-collapse: collapse; font-family: Calibri, Arial, sans-serif; font-size: 11pt; }
+  td, th { text-align: center; vertical-align: middle; padding: 6px 8px; }
+</style>
+</head>
+<body>
+<table>
+  <colgroup>
+    <col width="${wSL}" style="width:${wSL}px">
+    <col width="${wName}" style="width:${wName}px">
+    <col width="${wJob}" style="width:${wJob}px">
+    <col width="${wMob}" style="width:${wMob}px">
+  </colgroup>
+  <thead>
+    <tr style="height:32pt;">
+      <th colspan="4" style="background:#0f294a;color:#ffffff;font-size:15pt;font-weight:bold;text-align:center;vertical-align:middle;border:1px solid #0f294a;letter-spacing:0.5px;">SAHARA BOOTH 2 - JOB CARD LIST</th>
+    </tr>
+    <tr style="height:26pt;">
+      <th style="background:#173b70;color:#ffffff;font-size:11pt;font-weight:bold;text-align:center;vertical-align:middle;border:1px solid #173b70;">SL No</th>
+      <th style="background:#173b70;color:#ffffff;font-size:11pt;font-weight:bold;text-align:center;vertical-align:middle;border:1px solid #173b70;">Name</th>
+      <th style="background:#173b70;color:#ffffff;font-size:11pt;font-weight:bold;text-align:center;vertical-align:middle;border:1px solid #173b70;">Job Card Number</th>
+      <th style="background:#173b70;color:#ffffff;font-size:11pt;font-weight:bold;text-align:center;vertical-align:middle;border:1px solid #173b70;">Mobile Number</th>
+    </tr>
+  </thead>
+  <tbody>${tableRows}</tbody>
+</table>
+</body></html>`;
+
+  download(new Blob(["\uFEFF"+html],{type:"application/vnd.ms-excel;charset=utf-8;"}),"Sahara_Booth_2_Export.xls");
+};
+
 $("backupBtn").onclick=()=>download(new Blob([JSON.stringify({app:"Sahara Booth 2 Offline Form",version:1,exportedAt:new Date().toISOString(),records:rows},null,2)],{type:"application/json"}),"Sahara_Booth_2_Backup.json");
 function download(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
 $("restoreBtn").onclick=()=>$("restoreFile").click();
