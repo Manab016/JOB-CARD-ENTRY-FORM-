@@ -18,13 +18,13 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 <div id="dataTabView" class="tabview active"><section class="panel"><h2>ডাটা এন্ট্রি / Edit Form</h2>
 <form id="entryForm"><div class="grid">
 <div><label for="name">Name (নাম)</label><input id="name" required autocomplete="off"></div>
-<div><label for="shortNumber">Sort Number / Job Card Input (যেমন: 09/100)</label><input id="shortNumber" required autocomplete="off" placeholder="09/100"><div class="note" style="margin-top:6px">Full Job Card Number: <strong id="jobPreview">WB-09-008-003-009/100</strong></div></div>
+<div><label for="shortNumber">Job Card Number Input (যেমন:09/100)</label><input id="shortNumber" required autocomplete="off" placeholder="যেমন:09/100"><div class="note" style="margin-top:6px">Job Card Number: <strong id="jobPreview">WB-09-008-003-009/100</strong></div></div>
 <div><label for="mobile">Mobile Number (ঐচ্ছিক)</label><input id="mobile" type="tel" inputmode="numeric" autocomplete="off" placeholder="মোবাইল নম্বর লিখুন (ঐচ্ছিক)"></div>
 </div><div class="actions"><button type="submit" id="saveBtn">ডাটা Save করুন</button><button type="button" class="secondary" id="clearBtn">নতুন Entry / Clear</button></div></form>
-<p class="note">একটি মাত্র Sort Number ফিল্ডে 09/100 লিখলে Full Job Card Number স্বয়ংক্রিয়ভাবে WB-09-008-003-009/100 হবে। ডাটা এই ডিভাইসের Browser-এ সংরক্ষিত থাকবে।</p></section>
+<p class="note">Job Card Number Input ফিল্ডে 09/100 লিখলে Job Card Number স্বয়ংক্রিয়ভাবে WB-09-008-003-009/100 হবে। ডাটা এই ডিভাইসের Browser-এ সংরক্ষিত থাকবে।</p></section>
 <section class="panel"><h2>ডাটা ব্যবস্থাপনা</h2><div class="stats" id="count">মোট রেকর্ড: 0</div>
 <div class="actions"><button class="green" id="exportBtn">📥 Excel Export (XLSX)</button><button class="secondary" id="backupBtn">💾 Backup Download (JSON)</button><button class="secondary" id="restoreBtn">♻️ Backup Restore</button><input type="file" id="restoreFile" accept=".json,application/json" hidden><button class="danger" id="resetBtn">সব ডাটা Reset</button></div>
-<p class="note">Excel ফাইল Booking-এর মতো স্টাইলসহ XLSX ফরম্যাটে Export হবে। Backup JSON ফাইলে সব রেকর্ড থাকবে; পরে Restore করলে ডাটা ফেরত আসবে। নিয়মিত Backup রাখুন।</p><p class="note" id="firebaseStatus">☁️ Firebase সংযোগ হচ্ছে…</p></section>
+<p class="note">Backup JSON ফাইলে সব রেকর্ড থাকবে; পরে Restore করলে ডাটা ফেরত আসবে। নিয়মিত Backup রাখুন।</p><p class="note" id="firebaseStatus">☁️ Firebase সংযোগ হচ্ছে…</p></section>
 
 <section class="panel"><h2>রেকর্ড তালিকা</h2><input class="search" id="search" placeholder="নাম / Short Number / Job Card Number দিয়ে খুঁজুন…"><div class="tablewrap"><table><thead><tr><th>#</th><th>Name</th><th>Job Card Number</th><th>Mobile Number</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table></div></section></div><div id="demandTabView" class="tabview"><section class="panel" id="projectsPanel"><h2>Project অনুযায়ী Demand List</h2>
 <div class="grid">
