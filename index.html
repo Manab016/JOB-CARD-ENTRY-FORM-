@@ -7,7 +7,8 @@ header{background:#173b70;color:white;padding:18px 16px;text-align:center}header
 main{max-width:1000px;margin:16px auto;padding:0 12px}.panel{background:white;border-radius:12px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #0000000d}
 h2{font-size:18px;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
 label{display:block;font-size:13px;font-weight:bold;margin-bottom:6px}input{width:100%;padding:11px;border:1px solid #ccd5e2;border-radius:8px;font-size:16px}
-button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:pointer;margin:3px;background:#173b70;color:white}button.secondary{background:#e5edf8;color:#173b70}button.danger{background:#b42318}button.green{background:#16803c}
+button,a.btn-link{display:inline-block;text-decoration:none;border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:pointer;margin:3px;background:#173b70;color:white;text-align:center;font-size:14px}
+button.secondary,a.btn-link.secondary{background:#e5edf8;color:#173b70}button.danger{background:#b42318}button.green,a.btn-link.green{background:#16803c}
 .actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}.stats{font-weight:bold;color:#173b70}.tablewrap{height:450px;max-height:450px;overflow:auto;border:1px solid #d9e2ee;border-radius:8px;overscroll-behavior:contain}.tablewrap table{width:100%;border-collapse:collapse;min-width:520px}.tablewrap thead th{position:sticky;top:0;z-index:2}.tablewrap tbody tr{height:39px}@media(max-width:600px){.tablewrap{height:450px;max-height:450px}.tablewrap th,.tablewrap td{padding:8px;font-size:12px}.tablewrap tbody tr{height:39px}}th,td{padding:10px;border-bottom:1px solid #e5eaf1;text-align:left;font-size:14px}th{background:#edf3fb;position:sticky;top:0}td button{padding:6px 9px;font-size:12px}.search{margin-bottom:10px}.note{font-size:12px;color:#596579;line-height:1.5}
 </style></head><body>
 <header><h1>SAHARA BOOTH</h1><p style="font-size:16px;font-weight:bold;letter-spacing:1px">JOBCARD NUMBER</p></header>
@@ -20,8 +21,15 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 </div><div class="actions"><button type="submit" id="saveBtn">ডাটা Save করুন</button><button type="button" class="secondary" id="clearBtn">নতুন Entry / Clear</button></div></form>
 <p class="note">একটি মাত্র Sort Number ফিল্ডে 09/100 লিখলে Full Job Card Number স্বয়ংক্রিয়ভাবে WB-09-008-003-009/100 হবে। ডাটা এই ডিভাইসের Browser-এ সংরক্ষিত থাকবে।</p></section>
 <section class="panel"><h2>ডাটা ব্যবস্থাপনা</h2><div class="stats" id="count">মোট রেকর্ড: 0</div>
-<div class="actions"><button class="green" id="exportBtn">📥 Excel Export (CSV)</button><button class="secondary" id="backupBtn">💾 Backup Download (JSON)</button><button class="secondary" id="restoreBtn">♻️ Backup Restore</button><input type="file" id="restoreFile" accept=".json,application/json" hidden><button class="danger" id="resetBtn">সব ডাটা Reset</button></div>
-<p class="note">ফাইলটি যেকোনো মোবাইল বা কম্পিউটারের Excel/WPS/Google Sheets অ্যাপে সরাসরি ওপেন হবে। Backup JSON ফাইলে সব রেকর্ড থাকবে; পরে Restore করলে ডাটা ফেরত আসবে। নিয়মিত Backup রাখুন।</p></section>
+<div class="actions">
+  <button class="green" id="exportExcelBtn">📥 Excel File Download</button>
+  <a id="sheetsLink" class="btn-link green" href="#" target="_blank">🌐 Open in Google Sheets</a>
+  <button class="secondary" id="backupBtn">💾 Backup Download (JSON)</button>
+  <button class="secondary" id="restoreBtn">♻️ Backup Restore</button>
+  <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+  <button class="danger" id="resetBtn">সব ডাটা Reset</button>
+</div>
+<p class="note">যদি মোবাইলে এক্সেল ফাইল ওপেন না হয়, তবে সরাসরি <strong>"Open in Google Sheets"</strong> বাটনে ক্লিক করে অনলাইনে দেখতে ও প্রিন্ট করতে পারবেন। নিয়মিত Backup (JSON) রাখুন।</p></section>
 <section class="panel"><h2>রেকর্ড তালিকা</h2><input class="search" id="search" placeholder="নাম / Short Number / Job Card Number দিয়ে খুঁজুন…"><div class="tablewrap"><table><thead><tr><th>#</th><th>Name</th><th>Job Card Number</th><th>Mobile Number</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table></div></section>
 </main>
 <script>
@@ -30,9 +38,19 @@ const KEY="sahara_booth2_offline_v1";
 let rows, editIndex=-1;
 try{rows=JSON.parse(localStorage.getItem(KEY));if(!Array.isArray(rows))rows=initialData.map(x=>({...x}));}catch(e){rows=initialData.map(x=>({...x}));}
 const $=id=>document.getElementById(id);
-function persist(){localStorage.setItem(KEY,JSON.stringify(rows));render();}
+function persist(){localStorage.setItem(KEY,JSON.stringify(rows));updateGoogleSheetsLink();render();}
 function makeFull(v){const m=String(v||"").trim().match(/^(\d{1,3})\/(\d+)$/);return m?"WB-09-008-003-"+m[1].padStart(3,"0")+"/"+m[2]:"";}
 $("shortNumber").addEventListener("input",()=>{$("jobPreview").textContent=makeFull($("shortNumber").value)||"WB-09-008-003-…";});
+
+function updateGoogleSheetsLink(){
+  let csvText = "Sahara Booth Job Card Number 2026\r\n\r\nSL. No.,Name,Job Card Number,Mobile Number\r\n";
+  rows.forEach((r, idx) => {
+    csvText += `"${idx + 1}","${(r.name||"").replace(/"/g,'""')}","${(r.jobCardNumber||"").replace(/"/g,'""')}","${(r.mobile||"").replace(/"/g,'""')}"\r\n`;
+  });
+  const encodedUri = encodeURI("data:text/csv;charset=utf-8,\uFEFF" + csvText);
+  $("sheetsLink").href = "https://docs.google.com/spreadsheets/u/0/create";
+}
+
 function render(){const q=$("search").value.toLowerCase().trim();const filtered=rows.map((r,i)=>({...r,_i:i})).filter(r=>[r.name,r.shortNumber,r.jobCardNumber,r.mobile||""].some(v=>String(v).toLowerCase().includes(q)));
 $("count").textContent="মোট রেকর্ড: "+rows.length+" | প্রদর্শিত: "+filtered.length;
 $("tbody").innerHTML=filtered.map((r,n)=>`<tr><td>${r._i+1}</td><td>${esc(r.name)}</td><td>${esc(r.jobCardNumber)}</td><td>${esc(r.mobile||"")}</td><td><button class="secondary" onclick="editRow(${r._i})">Edit</button><button class="danger" onclick="deleteRow(${r._i})">Delete</button></td></tr>`).join("");
@@ -46,16 +64,13 @@ window.editRow=i=>{const r=rows[i];$("name").value=r.name;$("shortNumber").value
 window.deleteRow=i=>{if(confirm("এই রেকর্ডটি Delete করবেন?")){rows.splice(i,1);if(editIndex===i)editIndex=-1;persist();}};
 $("search").addEventListener("input",render);
 
-function csvCell(v){return '"'+String(v??"").replace(/"/g,'""')+'"';}
-$("exportBtn").onclick=()=>{
-  const csvRows = [
-    ["Sahara Booth Job Card Number 2026", "", "", ""],
-    ["", "", "", ""],
-    ["SL. No.", "Name", "Job Card Number", "Mobile Number"],
-    ...rows.map((r, idx) => [idx + 1, r.name, r.jobCardNumber, r.mobile || ""])
-  ];
-  const csv = "\uFEFF" + csvRows.map(a => a.map(csvCell).join(",")).join("\r\n");
-  download(new Blob([csv], { type: "text/csv;charset=utf-8;" }), "Sahara_Booth_Job_Card_2026.csv");
+$("exportExcelBtn").onclick=()=>{
+  const tableRows = rows.map((r, idx) => {
+    const bg = idx % 2 === 1 ? "#f4f7fc" : "#ffffff";
+    return `<tr style="height:24pt;background:${bg};"><td style="text-align:center;vertical-align:middle;border:1px solid #cbd5e1;font-weight:bold;color:#334155;">${idx+1}</td><td style="text-align:center;vertical-align:middle;border:1px solid #cbd5e1;font-weight:500;color:#0f172a;">${esc(r.name)}</td><td style="text-align:center;vertical-align:middle;border:1px solid #cbd5e1;mso-number-format:'\\@';color:#1e293b;">${esc(r.jobCardNumber)}</td><td style="text-align:center;vertical-align:middle;border:1px solid #cbd5e1;mso-number-format:'\\@';color:#1e293b;">${esc(r.mobile||"-")}</td></tr>`;
+  }).join("");
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body><table><thead><tr><th colspan="4" style="background:#173b70;color:#ffffff;font-size:14pt;font-weight:bold;text-align:center;border:1px solid #173b70;">Sahara Booth Job Card Number 2026</th></tr><tr><th style="background:#1f487e;color:#ffffff;text-align:center;border:1px solid #1f487e;">SL. No.</th><th style="background:#1f487e;color:#ffffff;text-align:center;border:1px solid #1f487e;">Name</th><th style="background:#1f487e;color:#ffffff;text-align:center;border:1px solid #1f487e;">Job Card Number</th><th style="background:#1f487e;color:#ffffff;text-align:center;border:1px solid #1f487e;">Mobile Number</th></tr></thead><tbody>${tableRows}</tbody></table></body></html>`;
+  download(new Blob(["\uFEFF" + html], { type: "application/vnd.ms-excel;charset=utf-8;" }), "Sahara_Booth_Job_Card_2026.xls");
 };
 
 $("backupBtn").onclick=()=>download(new Blob([JSON.stringify({app:"Sahara Booth 2 Offline Form",version:1,exportedAt:new Date().toISOString(),records:rows},null,2)],{type:"application/json"}),"Sahara_Booth_2_Backup.json");
@@ -63,5 +78,6 @@ function download(blob,name){const a=document.createElement("a");a.href=URL.crea
 $("restoreBtn").onclick=()=>$("restoreFile").click();
 $("restoreFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());const arr=Array.isArray(obj)?obj:obj.records;if(!Array.isArray(arr)||!arr.every(r=>r&&typeof r.name==="string"&&typeof r.shortNumber==="string"&&typeof r.jobCardNumber==="string"))throw Error("invalid");if(confirm("বর্তমান "+rows.length+"টি রেকর্ডের বদলে Backup-এর "+arr.length+"টি রেকর্ড Restore হবে। এগোবেন?")){rows=arr.map(r=>({name:r.name,shortNumber:r.shortNumber,jobCardNumber:r.jobCardNumber,mobile:r.mobile||""}));editIndex=-1;persist();alert("Backup Restore সম্পন্ন হয়েছে।");}}catch(err){alert("ভুল Backup ফাইল। Restore করা যায়নি।");}e.target.value="";};
 $("resetBtn").onclick=()=>{if(confirm("সতর্কতা: সব রেকর্ড মুছে যাবে। আগে Backup নিয়েছেন?")){rows=[];editIndex=-1;persist();}};
+updateGoogleSheetsLink();
 render();
 </script></body></html>
