@@ -20,8 +20,8 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 </div><div class="actions"><button type="submit" id="saveBtn">ডাটা Save করুন</button><button type="button" class="secondary" id="clearBtn">নতুন Entry / Clear</button></div></form>
 <p class="note">একটি মাত্র Sort Number ফিল্ডে 09/100 লিখলে Full Job Card Number স্বয়ংক্রিয়ভাবে WB-09-008-003-009/100 হবে। ডাটা এই ডিভাইসের Browser-এ সংরক্ষিত থাকবে।</p></section>
 <section class="panel"><h2>ডাটা ব্যবস্থাপনা</h2><div class="stats" id="count">মোট রেকর্ড: 0</div>
-<div class="actions"><button class="green" id="exportBtn">📥 Excel Export (CSV)</button><button class="secondary" id="backupBtn">💾 Backup Download (JSON)</button><button class="secondary" id="restoreBtn">♻️ Backup Restore</button><input type="file" id="restoreFile" accept=".json,application/json" hidden><button class="danger" id="resetBtn">সব ডাটা Reset</button></div>
-<p class="note">CSV ফাইল Microsoft Excel বা যেকোনো Spreadsheet অ্যাপে সহজে খোলা যাবে। Backup JSON ফাইলে সব রেকর্ড থাকবে; পরে Restore করলে ডাটা ফেরত আসবে। নিয়মিত Backup রাখুন।</p></section>
+<div class="actions"><button class="green" id="exportBtn">📥 Excel Export (Professional)</button><button class="secondary" id="backupBtn">💾 Backup Download (JSON)</button><button class="secondary" id="restoreBtn">♻️ Backup Restore</button><input type="file" id="restoreFile" accept=".json,application/json" hidden><button class="danger" id="resetBtn">সব ডাটা Reset</button></div>
+<p class="note">Excel এক্সপোর্ট ফাইলে আপনার পছন্দমত প্রফেশনাল হেডিং এবং ডিজাইন দেওয়া হয়েছে। Backup JSON ফাইলে সব রেকর্ড থাকবে; পরে Restore করলে ডাটা ফেরত আসবে। নিয়মিত Backup রাখুন।</p></section>
 <section class="panel"><h2>রেকর্ড তালিকা</h2><input class="search" id="search" placeholder="নাম / Short Number / Job Card Number দিয়ে খুঁজুন…"><div class="tablewrap"><table><thead><tr><th>#</th><th>Name</th><th>Job Card Number</th><th>Mobile Number</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table></div></section>
 </main>
 <script>
@@ -48,8 +48,18 @@ $("search").addEventListener("input",render);
 
 function csvCell(v){return '"'+String(v??"").replace(/"/g,'""')+'"';}
 $("exportBtn").onclick=()=>{
-  const csv="\uFEFF"+[["SL No","Name","Job Card Number","Mobile Number"],...rows.map((r,idx)=>[idx+1,r.name,r.jobCardNumber,r.mobile||""])].map(a=>a.map(csvCell).join(",")).join("\r\n");
-  download(new Blob([csv],{type:"text/csv;charset=utf-8;"}),"Sahara_Booth_2_Export.csv");
+  const headerTitle = "Sahara Booth Job Card Number 2026";
+  const columns = ["SL. No.", "Name", "Job Card Number", "Mobile Number"];
+  
+  const csvRows = [
+    [headerTitle, "", "", ""],
+    ["", "", "", ""],
+    columns,
+    ...rows.map((r, idx) => [idx + 1, r.name, r.jobCardNumber, r.mobile || ""])
+  ];
+
+  const csv = "\uFEFF" + csvRows.map(a => a.map(csvCell).join(",")).join("\r\n");
+  download(new Blob([csv], { type: "text/csv;charset=utf-8;" }), "Sahara_Booth_Job_Card_2026.csv");
 };
 
 $("backupBtn").onclick=()=>download(new Blob([JSON.stringify({app:"Sahara Booth 2 Offline Form",version:1,exportedAt:new Date().toISOString(),records:rows},null,2)],{type:"application/json"}),"Sahara_Booth_2_Backup.json");
