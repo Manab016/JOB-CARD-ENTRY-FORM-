@@ -219,14 +219,56 @@ $("projectExportBtn").onclick=async()=>{
  ws.pageSetup={paperSize:9,orientation:"portrait",fitToPage:true,fitToWidth:1,fitToHeight:0,horizontalCentered:true};
  await downloadWorkbook(wb,"Demand_List_"+(p.name||"Project").replace(/[^a-z0-9-_ ]/gi,"_").trim().replace(/\s+/g,"_")+".xlsx");
 };
-function loadGroupsAndAttendance(){memberGroups=[];attendanceData={};renderGroupOptions();renderGroupList();}
-function saveAttendanceLocal(){if(attendanceFirebaseReady)fetch(FIREBASE_ATTENDANCE_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(attendanceData)}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);}).catch(()=>{$('firebaseStatus').textContent='⚠️ হাজিরা Firebase-এ সংরক্ষণ হয়নি।';});else $('firebaseStatus').textContent='⚠️ Firebase সংযোগ নেই—হাজিরা সংরক্ষণ হয়নি।';}
-function syncGroupsToFirebase(){if(!groupsFirebaseReady)return;groupsSyncBusy=true;fetch(FIREBASE_GROUPS_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(memberGroups)}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);}).catch(()=>{$('firebaseStatus').textContent='⚠️ বিভাগ Sync হয়নি—Internet/Rules পরীক্ষা করুন।';}).finally(()=>{groupsSyncBusy=false;});}
-async function initializeGroupsFirebase(){try{const r=await fetch(FIREBASE_GROUPS_URL,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const remote=await r.json();if(Array.isArray(remote)){memberGroups=[...new Set(remote.filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim()))];}else{const put=await fetch(FIREBASE_GROUPS_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(memberGroups)});if(!put.ok)throw Error('HTTP '+put.status);}renderGroupOptions();renderGroupList();render();groupsFirebaseReady=true;setInterval(async()=>{try{if(groupsSyncBusy)return;const x=await fetch(FIREBASE_GROUPS_URL,{cache:'no-store'});if(!x.ok)return;const latest=await x.json();if(Array.isArray(latest)){const normalized=[...new Set(latest.filter(v=>typeof v==='string'&&v.trim()).map(v=>v.trim()))];if(JSON.stringify(normalized)!==JSON.stringify(memberGroups)){memberGroups=normalized;renderGroupOptions();renderGroupList();render();}}}catch(e){}},5000);}catch(e){$('firebaseStatus').textContent='⚠️ অনলাইন বিভাগ Sync সংযোগ হয়নি—Internet/Database Rules পরীক্ষা করুন।';}}
-function renderGroupOptions(){const sel=$('memberGroup');if(sel){const old=sel.value;sel.innerHTML='<option value="">সাধারণ তালিকা</option>'+memberGroups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');if(memberGroups.includes(old))sel.value=old;}const filter=$('recordGroupFilter');if(filter){const old=filter.value;filter.innerHTML='<option value="__all__">সব সদস্যের তালিকা</option><option value="">সাধারণ তালিকা</option>'+memberGroups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');if([...filter.options].some(o=>o.value===old))filter.value=old;}}
+function safeLocalGet(key,fallback){try{const raw=localStorage.getItem(key);return raw?JSON.parse(raw):fallback;}catch(e){return fallback;}}
+function safeLocalSet(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true;}catch(e){return false;}}
+function normalizeGroupList(list){return [...new Set((Array.isArray(list)?list:[]).filter(x=>typeof x==='string'&&x.trim()).map(x=>x.trim()))];}
+function loadGroupsAndAttendance(){
+ // আগের সংস্করণে এই ফাংশন memberGroups=[] করে Firebase থেকে আসা বিভাগের তালিকা মুছে দিত।
+ memberGroups=normalizeGroupList(safeLocalGet(GROUPS_KEY,[]));
+ const savedAttendance=safeLocalGet(ATTENDANCE_KEY,{});
+ attendanceData=savedAttendance&&typeof savedAttendance==='object'&&!Array.isArray(savedAttendance)?savedAttendance:{};
+ renderGroupOptions();renderGroupList();
+}
+function saveGroupsLocal(){safeLocalSet(GROUPS_KEY,memberGroups);}
+function saveAttendanceLocal(){
+ safeLocalSet(ATTENDANCE_KEY,attendanceData);
+ if(attendanceFirebaseReady)fetch(FIREBASE_ATTENDANCE_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(attendanceData)}).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);}).catch(()=>{$('firebaseStatus').textContent='⚠️ হাজিরা Firebase-এ সংরক্ষণ হয়নি।';});
+ else $('firebaseStatus').textContent='⚠️ Firebase সংযোগ নেই—হাজিরা এই ডিভাইসে LocalStorage-এ রাখা হয়েছে।';
+}
+async function syncGroupsToFirebase(){
+ saveGroupsLocal();
+ if(!groupsFirebaseReady)return;
+ groupsSyncBusy=true;
+ try{const r=await fetch(FIREBASE_GROUPS_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(memberGroups)});if(!r.ok)throw Error('HTTP '+r.status);}
+ catch(e){$('firebaseStatus').textContent='⚠️ বিভাগ Firebase-এ Sync হয়নি; এই ডিভাইসে সংরক্ষিত আছে।'}
+ finally{groupsSyncBusy=false;}
+}
+async function initializeGroupsFirebase(){
+ try{
+  const r=await fetch(FIREBASE_GROUPS_URL,{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);
+  const remote=await r.json();
+  if(Array.isArray(remote)){
+   // Firebase ও LocalStorage—দুই জায়গার বিভাগ একত্র করা, যাতে নিজের তৈরি বিভাগ হারিয়ে না যায়।
+   const merged=normalizeGroupList([...remote,...memberGroups]);
+   const changed=JSON.stringify(merged)!==JSON.stringify(remote);
+   memberGroups=merged;
+   if(changed){const put=await fetch(FIREBASE_GROUPS_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(memberGroups)});if(!put.ok)throw Error('HTTP '+put.status);}
+  }else{
+   const put=await fetch(FIREBASE_GROUPS_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(memberGroups)});if(!put.ok)throw Error('HTTP '+put.status);
+  }
+  saveGroupsLocal();renderGroupOptions();renderGroupList();render();groupsFirebaseReady=true;
+  $('firebaseStatus').textContent='☁️ Firebase Online: সদস্য বিভাগ Sync চালু';
+  setInterval(async()=>{try{if(groupsSyncBusy)return;const x=await fetch(FIREBASE_GROUPS_URL,{cache:'no-store'});if(!x.ok)return;const latest=await x.json();if(Array.isArray(latest)){const normalized=normalizeGroupList(latest);if(JSON.stringify(normalized)!==JSON.stringify(memberGroups)){memberGroups=normalized;saveGroupsLocal();renderGroupOptions();renderGroupList();render();}}}catch(e){}},5000);
+ }catch(e){saveGroupsLocal();$('firebaseStatus').textContent='⚠️ অনলাইন বিভাগ Sync সংযোগ হয়নি—Local বিভাগ এই ডিভাইসে থাকবে। Internet/Database Rules পরীক্ষা করুন।';}
+}
+function renderGroupOptions(){
+ const sel=$('memberGroup');if(sel){const old=sel.value;sel.innerHTML='<option value="">সাধারণ তালিকা</option>'+memberGroups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');if(memberGroups.includes(old))sel.value=old;}
+ const filter=$('recordGroupFilter');if(filter){const old=filter.value;filter.innerHTML='<option value="__all__">সব সদস্যের তালিকা</option><option value="">সাধারণ তালিকা</option>'+memberGroups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');if([...filter.options].some(o=>o.value===old))filter.value=old;}
+ const target=$('groupManagerTarget');if(target){const old=target.value;target.innerHTML='<option value="">সাধারণ তালিকা</option>'+memberGroups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');if(memberGroups.includes(old))target.value=old;}
+}
 function renderGroupList(){const box=$('groupList');if(!box)return;box.innerHTML=memberGroups.length?memberGroups.map(g=>`<span style="display:inline-flex;align-items:center;gap:5px;background:#fff0d9;padding:6px 9px;border-radius:7px;margin:3px">${esc(g)} <button type="button" class="danger" style="margin:0;padding:3px 7px" data-del-group="${esc(g)}">×</button></span>`).join(''):'এখনও কোনো বিভাগ তৈরি করা হয়নি।';}
-$('createGroupBtn').onclick=()=>{const name=$('newGroupName').value.trim();if(!name)return alert('বিভাগের নাম লিখুন।');if(memberGroups.some(g=>g.toLowerCase()===name.toLowerCase()))return alert('এই বিভাগটি আগে থেকেই আছে।');memberGroups.push(name);syncGroupsToFirebase();$('newGroupName').value='';renderGroupOptions();renderGroupList();};
-$('groupList').addEventListener('click',e=>{const b=e.target.closest('[data-del-group]');if(!b)return;const g=b.getAttribute('data-del-group');if(rows.some(r=>r.groupName===g)&&!confirm('এই বিভাগে সদস্য আছে। বিভাগটি মুছলে তাঁদের সাধারণ তালিকায় রাখা হবে। এগোবেন?'))return;rows.forEach(r=>{if(r.groupName===g)r.groupName='';});memberGroups=memberGroups.filter(x=>x!==g);syncGroupsToFirebase();if(firebaseReady)syncToFirebase();renderGroupOptions();renderGroupList();render();});
+$('createGroupBtn').onclick=()=>{const name=$('newGroupName').value.trim();if(!name)return alert('বিভাগের নাম লিখুন।');if(memberGroups.some(g=>g.toLowerCase()===name.toLowerCase()))return alert('এই বিভাগটি আগে থেকেই আছে।');memberGroups.push(name);saveGroupsLocal();syncGroupsToFirebase();$('newGroupName').value='';renderGroupOptions();renderGroupList();render();};
+$('groupList').addEventListener('click',e=>{const b=e.target.closest('[data-del-group]');if(!b)return;const g=b.getAttribute('data-del-group');if(rows.some(r=>r.groupName===g)&&!confirm('এই বিভাগে সদস্য আছে। বিভাগটি মুছলে তাঁদের সাধারণ তালিকায় রাখা হবে। এগোবেন?'))return;rows.forEach(r=>{if(r.groupName===g)r.groupName='';});memberGroups=memberGroups.filter(x=>x!==g);saveGroupsLocal();syncGroupsToFirebase();if(firebaseReady)syncToFirebase();renderGroupOptions();renderGroupList();render();});
 function attendanceKey(projectId,date){return String(projectId)+'|'+String(date);}
 function attendanceMembersForProject(p){
  const supervisorIds=allSupervisorIds();
@@ -261,7 +303,7 @@ $('unlockAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanc
 $('markAllPresentBtn').onclick=()=>{if($('saveAttendanceBtn').disabled)return;document.querySelectorAll('.attendanceCheck').forEach(x=>x.checked=true);updateAttendanceSummary();};
 $('markAllAbsentBtn').onclick=()=>{if($('saveAttendanceBtn').disabled)return;document.querySelectorAll('.attendanceCheck').forEach(x=>x.checked=false);updateAttendanceSummary();};
 $('attendanceExportBtn').onclick=async()=>{const p=currentProject();if(!p)return alert('আগে Project নির্বাচন করুন।');if(typeof ExcelJS==='undefined')return alert('ExcelJS লোড হয়নি।');const members=(p.members||[]).map(id=>rows.find(r=>r.id===id)).filter(Boolean).sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));const dates=[...new Set(Object.keys(attendanceData).filter(k=>k.startsWith(String(p.id)+'|')).map(k=>k.slice(String(p.id).length+1)))].sort();const wb=new ExcelJS.Workbook(),ws=wb.addWorksheet('Attendance');const headers=['SR No.','Name','Job Card Number','কাজের দিন'];const data=members.map((r,i)=>[i+1,r.name||'',r.jobCardNumber||'',dates.filter(d=>attendanceData[attendanceKey(p.id,d)]?.[r.id]===true).length]);styleExportSheet(ws,headers,data,'ATTENDANCE SUMMARY 2026',{1:'সর্বমোট সদস্য',4:members.length});await downloadWorkbook(wb,'Attendance_'+(p.name||'Project').replace(/[^a-z0-9-_ ]/gi,'_').trim().replace(/\s+/g,'_')+'.xlsx');};
-async function initializeAttendanceFirebase(){try{const r=await fetch(FIREBASE_ATTENDANCE_URL,{cache:'no-store'});if(!r.ok)throw Error();const remote=await r.json();if(remote&&typeof remote==='object')attendanceData=remote;else await fetch(FIREBASE_ATTENDANCE_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(attendanceData)});attendanceFirebaseReady=true;renderAttendance();}catch(e){attendanceFirebaseReady=false;}}
+async function initializeAttendanceFirebase(){try{const r=await fetch(FIREBASE_ATTENDANCE_URL,{cache:'no-store'});if(!r.ok)throw Error();const remote=await r.json();if(remote&&typeof remote==='object'&&!Array.isArray(remote))attendanceData=remote;else await fetch(FIREBASE_ATTENDANCE_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(attendanceData)});safeLocalSet(ATTENDANCE_KEY,attendanceData);attendanceFirebaseReady=true;renderAttendance();}catch(e){attendanceFirebaseReady=false;}}
 function makeFull(v){const m=String(v||"").trim().match(/^(\d{1,3})\/(\d+)$/);return m?"WB-09-008-003-"+m[1].padStart(3,"0")+"/"+m[2]:"";}
 $("shortNumber").addEventListener("input",()=>{$("jobPreview").textContent=makeFull($("shortNumber").value)||"WB-09-008-003-…";});
 function render(){const q=$("search").value.toLowerCase().trim();const groupFilter=$("recordGroupFilter")?.value??"__all__";const filtered=rows.map((r,i)=>({...r,_i:i})).filter(r=>(groupFilter==="__all__"||(r.groupName||"")===groupFilter)&&[r.name,r.shortNumber,r.jobCardNumber,r.mobile||""].some(v=>String(v).toLowerCase().includes(q))).sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));
@@ -341,7 +383,7 @@ $("exportBtn").onclick=async()=>{
 $("backupBtn").onclick=()=>download(new Blob([JSON.stringify({app:"Sahara Booth 2 Offline Form",version:1,exportedAt:new Date().toISOString(),records:rows,projects:projects,groups:memberGroups,attendance:attendanceData},null,2)],{type:"application/json"}),"Sahara_Booth_2_Backup.json");
 function download(blob,name){const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;a.click();URL.revokeObjectURL(a.href);}
 $("restoreBtn").onclick=()=>$("restoreFile").click();
-$("restoreFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());const arr=Array.isArray(obj)?obj:obj.records;if(!Array.isArray(arr)||!arr.every(r=>r&&typeof r.name==="string"&&typeof r.shortNumber==="string"&&typeof r.jobCardNumber==="string"))throw Error("invalid");if(confirm("বর্তমান "+rows.length+"টি রেকর্ডের বদলে Backup-এর "+arr.length+"টি রেকর্ড Restore হবে। এগোবেন?")){rows=ensureRecordIds(arr.map((r,i)=>({id:r.id||undefined,name:r.name,shortNumber:r.shortNumber,jobCardNumber:r.jobCardNumber,mobile:r.mobile||"",masterRollNo:Number(r.masterRollNo)||i+1,masterRollCode:r.masterRollCode||"",groupName:r.groupName||"",sourceGroup:r.sourceGroup||"existing",isSupervisor:!!r.isSupervisor})));nextMasterRollNo=Math.max(0,...rows.map(r=>Number(r.masterRollNo)||0))+1;if(Array.isArray(obj.groups)){memberGroups=obj.groups;renderGroupOptions();renderGroupList();}if(obj.attendance&&typeof obj.attendance==="object"){attendanceData=obj.attendance;saveAttendanceLocal();}if(Array.isArray(obj.projects)){projects=obj.projects;renderProjects();}editIndex=-1;persist();alert("Backup Restore সম্পন্ন হয়েছে।");}}catch(err){alert("ভুল Backup ফাইল। Restore করা যায়নি।");}e.target.value="";};
+$("restoreFile").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const obj=JSON.parse(await f.text());const arr=Array.isArray(obj)?obj:obj.records;if(!Array.isArray(arr)||!arr.every(r=>r&&typeof r.name==="string"&&typeof r.shortNumber==="string"&&typeof r.jobCardNumber==="string"))throw Error("invalid");if(confirm("বর্তমান "+rows.length+"টি রেকর্ডের বদলে Backup-এর "+arr.length+"টি রেকর্ড Restore হবে। এগোবেন?")){rows=ensureRecordIds(arr.map((r,i)=>({id:r.id||undefined,name:r.name,shortNumber:r.shortNumber,jobCardNumber:r.jobCardNumber,mobile:r.mobile||"",masterRollNo:Number(r.masterRollNo)||i+1,masterRollCode:r.masterRollCode||"",groupName:r.groupName||"",sourceGroup:r.sourceGroup||"existing",isSupervisor:!!r.isSupervisor})));nextMasterRollNo=Math.max(0,...rows.map(r=>Number(r.masterRollNo)||0))+1;if(Array.isArray(obj.groups)){memberGroups=normalizeGroupList(obj.groups);saveGroupsLocal();syncGroupsToFirebase();renderGroupOptions();renderGroupList();}if(obj.attendance&&typeof obj.attendance==="object"){attendanceData=obj.attendance;saveAttendanceLocal();}if(Array.isArray(obj.projects)){projects=obj.projects;renderProjects();}editIndex=-1;persist();alert("Backup Restore সম্পন্ন হয়েছে।");}}catch(err){alert("ভুল Backup ফাইল। Restore করা যায়নি।");}e.target.value="";};
 $("resetBtn").onclick=()=>{if(confirm("সতর্কতা: সব রেকর্ড মুছে যাবে। আগে Backup নিয়েছেন?")){rows=[];editIndex=-1;persist();}};
 render();
 loadGroupsAndAttendance();
