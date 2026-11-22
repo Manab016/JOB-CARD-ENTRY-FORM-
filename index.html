@@ -12,9 +12,9 @@ label{display:block;font-size:13px;font-weight:bold;margin-bottom:6px}input{widt
 button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:pointer;margin:3px;background:#ff9933;color:white}button.secondary{background:#fff0d9;color:#b45309}button.danger{background:#b42318}button.green{background:#138808}
 .actions{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}.stats{font-weight:bold;color:#138808}.tablewrap{height:450px;max-height:450px;overflow:auto;border:1px solid #ffcc80;border-radius:8px;overscroll-behavior:contain}.tablewrap table{width:100%;border-collapse:collapse;min-width:520px}.tablewrap thead th{position:sticky;top:0;z-index:2}.tablewrap tbody tr{height:39px}@media(max-width:600px){.tablewrap{height:450px;max-height:450px}.tablewrap th,.tablewrap td{padding:8px;font-size:12px}.tablewrap tbody tr{height:39px}}th,td{padding:10px;border-bottom:1px solid #ffe0b2;text-align:left;font-size:14px}th{background:#ffedd5;position:sticky;top:0}td button{padding:6px 9px;font-size:12px}.search{margin-bottom:10px}.note{font-size:12px;color:#6b5b4a;line-height:1.5}
 .tabbar{display:flex;gap:8px;max-width:1000px;margin:14px auto 0;padding:0 12px}.tabbtn{flex:1;padding:13px 10px;border:1px solid #ff9933;background:#fff0d9;color:#9a4d00;border-radius:10px;font-size:15px}.tabbtn.active{background:#ff9933;color:#fff;box-shadow:0 2px 6px #0000001a}.tabview{display:none}.tabview.active{display:block}.compact-section{margin-bottom:12px}.compact-section>summary{cursor:pointer;list-style:none;font-weight:bold;font-size:16px;padding:2px 0;display:flex;align-items:center;justify-content:space-between}.compact-section>summary::-webkit-details-marker{display:none}.compact-section>summary:after{content:"＋";color:#b45309;font-size:18px}.compact-section[open]>summary:after{content:"−"}.compact-section .panel-content{padding-top:12px}.code-picker{max-height:220px;overflow:auto;border:1px solid #ffcc80;border-radius:8px;padding:6px;margin-top:8px}.code-member{display:flex;align-items:center;gap:8px;padding:7px;border-bottom:1px solid #ffe0b2;font-weight:normal;margin:0}.code-member input{width:18px;height:18px;flex:0 0 auto}.modal-backdrop{display:none;position:fixed;inset:0;background:#0008;z-index:1000;padding:14px;align-items:center;justify-content:center}
-.modal-backdrop.open{display:flex}.modal-box{background:#fff;width:min(680px,100%);max-height:90vh;overflow:auto;border-radius:14px;padding:16px;box-shadow:0 8px 30px #0004}
-.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.modal-list{max-height:48vh;overflow:auto;border:1px solid #ffcc80;border-radius:8px;margin-top:10px}
-.modal-member{display:flex;align-items:center;gap:10px;padding:9px;border-bottom:1px solid #ffe0b2;margin:0;font-weight:normal}.modal-member input{width:18px;height:18px;flex:0 0 auto}
+.modal-backdrop.open{display:flex}.modal-box{background:#fff;width:min(680px,100%);max-height:calc(100dvh - 28px);overflow:hidden;display:flex;flex-direction:column;border-radius:14px;padding:12px;box-shadow:0 8px 30px #0004;overscroll-behavior:contain}.modal-box>*{flex-shrink:0}
+.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.modal-list{height:min(38vh,360px);min-height:120px;max-height:38vh;overflow:auto;border:1px solid #ffcc80;border-radius:8px;margin:6px 0;flex:1 1 auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.modal-member{display:flex;align-items:center;gap:10px;padding:7px 9px;border-bottom:1px solid #ffe0b2;margin:0;font-weight:normal;min-height:42px}.modal-member input{width:20px;height:20px;flex:0 0 auto;accent-color:#138808}
 .code-attendance-grid{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .code-attendance-card{border:1px solid #ffcc80;background:#fffaf3;color:#7c3f00;border-radius:20px;padding:6px 11px;text-align:center;margin:0;width:auto;min-height:34px;font-size:13px;white-space:nowrap}
 .code-attendance-card.active{border:2px solid #ff9933;background:#fff0d9}
@@ -25,6 +25,12 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 .code-attendance-detail{border:1px solid #ffcc80;border-radius:9px;padding:10px;background:#fffdf9}
 .code-attendance-detail table{width:100%;border-collapse:collapse;min-width:360px}
 
+@media(max-width:600px){.modal-backdrop{padding:7px;align-items:center}.modal-box{width:100%;max-height:calc(100dvh - 14px);padding:9px;border-radius:12px}.modal-head h2{font-size:17px;margin:0}.modal-head button{padding:8px 10px;margin:0}.modal-box>.note{font-size:11px;line-height:1.35;margin:5px 0}.modal-box #groupManagerSearch{padding:9px;font-size:15px;margin:3px 0 5px}.modal-list{height:34dvh;max-height:34dvh;min-height:110px;margin:4px 0}.modal-member{padding:6px 7px;min-height:40px}.modal-member strong{font-size:13px}.modal-member small{font-size:11px}.modal-box #groupManagerTarget{padding:9px!important;font-size:15px!important}.modal-box #groupManagerTargetWrap{margin-top:5px!important}.modal-box #groupManagerActions{gap:4px;margin-top:6px}.modal-box #groupManagerActions button{padding:8px 9px;font-size:12px;margin:1px;flex:1 1 auto}.modal-box #groupManagerCount{font-size:11px;margin-top:3px}}
+
+.code-sort-handle{background:#fff0d9;color:#9a4d00;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;white-space:nowrap}
+.code-sort-handle:active{cursor:grabbing}
+#projectCodeModalContent tr.code-row-dragging{opacity:.45}
+#projectCodeModalContent tr.code-row-over{outline:2px dashed #ff9933;outline-offset:-2px;background:#fff0d9}
 </style></head><body>
 <header><h1>SAHARA BOOTH</h1><p style="font-size:16px;font-weight:bold;letter-spacing:1px">JOB CARD NUMBER 2026</p></header>
 <nav class="tabbar" role="tablist"><button type="button" class="tabbtn active" id="dataTabBtn" role="tab" aria-selected="true">📋 Data Entry & List</button><button type="button" class="tabbtn" id="demandTabBtn" role="tab" aria-selected="false">🗂️ Project Demand</button></nav>
@@ -48,6 +54,7 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 <div class="actions"><button type="button" class="green" id="makeSupervisorBtn">＋ Supervisor হিসেবে যোগ করুন</button><button type="button" class="secondary" id="removeSupervisorBtn">Supervisor পদ থেকে বাদ দিন</button></div>
 <p class="note">এখানে মূল সদস্য তালিকা থেকে Search করে Supervisor নির্ধারণ করুন। Supervisor-রা কাজের সদস্য হিসেবে কোনো Project-এ যোগ হতে পারবেন না।</p>
 <div class="note" id="supervisorRegistryStatus"></div></div></details>
+<details class="panel compact-section" id="duplicatePanel" style="border:1px solid #ef9a9a"><summary><span>🔎 ডুপ্লিকেট Job Card খুঁজুন</span><span class="stats" id="duplicateSummary" style="font-size:12px;margin-left:auto;margin-right:10px">ডুপ্লিকেট পরীক্ষা হচ্ছে…</span></summary><div class="panel-content"><p class="note">একই নাম এবং একই Job Card Number একাধিক রেকর্ডে থাকলেই এখানে দেখাবে। একই পরিবারের আলাদা সদস্যের Job Card Number এক হলেও নাম আলাদা হলে ডুপ্লিকেট ধরা হবে না।</p><input class="search" id="duplicateSearch" placeholder="Job Card Number / নাম দিয়ে ডুপ্লিকেট খুঁজুন…" autocomplete="off"><div class="tablewrap"><table><thead><tr><th>Job Card Number</th><th>নাম</th><th>কতবার আছে</th><th>SR No.</th></tr></thead><tbody id="duplicateTbody"></tbody></table></div></div></details>
 <section class="panel"><h2>রেকর্ড তালিকা</h2><input class="search" id="search" placeholder="নাম / Short Number / Job Card Number দিয়ে খুঁজুন…"><select id="recordGroupFilter" style="width:100%;padding:10px;margin:8px 0;border:1px solid #ffcc80;border-radius:8px;background:white"><option value="__all__">সব সদস্যের তালিকা</option><option value="">সাধারণ তালিকা</option></select><div class="tablewrap"><table><thead><tr><th>SR No.</th><th>Name</th><th>Job Card Number</th><th>Mobile Number</th><th>Action</th></tr></thead><tbody id="tbody"></tbody></table></div></section></div><div id="demandTabView" class="tabview"><section class="panel" id="projectsPanel"><h2>Project অনুযায়ী Demand List</h2>
 <details class="panel compact-section" style="border:1px solid #ffcc80;margin-bottom:14px"><summary>Master Roll Code তৈরি ও ১০ জন পর্যন্ত সদস্য নির্ধারণ</summary><div class="panel-content">
 <div class="grid"><div><label for="masterRollCodeInput">নিজের তৈরি Master Roll Code</label><input id="masterRollCodeInput" placeholder="যেমন: 1199 / MR-01" autocomplete="off"></div><div><label for="codeMemberSearch">সদস্য খুঁজুন (নাম / Job Card Number)</label><input id="codeMemberSearch" placeholder="নাম বা Job Card Number লিখুন…" autocomplete="off"></div></div>
@@ -73,17 +80,16 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 <div class="stats" id="projectCount" style="margin:10px 0">Project-এর সদস্য: 0</div>
 <details class="compact-section" id="projectMemberListDetails" style="border:1px solid #ffcc80;border-radius:9px;padding:10px;margin-top:8px;background:#fffdf9"><summary style="cursor:pointer;font-weight:bold;color:#9a4d00">এই Project-এর সদস্য তালিকা দেখুন</summary><input id="projectMemberSearch" type="search" placeholder="এই Project-এর সদস্য খুঁজুন…" autocomplete="off" style="width:100%;max-width:280px;padding:8px 10px;font-size:13px;margin-top:10px"><div class="tablewrap" style="height:220px;max-height:220px;margin-top:10px"><table style="min-width:500px"><thead><tr><th>SR No.</th><th>Name</th><th>Job Card Number</th><th>Mobile</th><th>Action</th></tr></thead><tbody id="projectTbody"></tbody></table></div></details>
 <p class="note">একজন সদস্যের Job Card Number একসঙ্গে শুধুমাত্র একটি অসম্পন্ন Project-এ থাকতে পারবে। Project-এর কাজ সম্পন্ন করলে তাঁকে অন্য Project-এ যোগ করা যাবে। Project-এর সদস্য যোগ/বাদ দিলে মূল রেকর্ড পরিবর্তন হবে না। Project List Firebase-এ আলাদাভাবে Sync হবে।</p>
-<details class="panel compact-section" style="border:1px solid #ffcc80;margin-top:14px"><summary>📅 দৈনিক কাজের হাজিরা</summary><div class="panel-content"><div class="grid"><div><label for="attendanceDate">কাজের তারিখ</label><input id="attendanceDate" type="date"></div><div style="display:flex;align-items:end"><button type="button" class="green" id="loadAttendanceBtn">তারিখ অনুযায়ী হাজিরা দেখুন</button></div></div><div class="stats" id="attendanceSummary" style="margin:10px 0">Project নির্বাচন করুন</div><div class="tablewrap" style="height:300px;max-height:300px"><table><thead><tr><th>SR No.</th><th>Name</th><th>Job Card Number</th><th>কাজ করেছেন?</th></tr></thead><tbody id="attendanceTbody"></tbody></table></div><div class="actions"><button type="button" class="green" id="saveAttendanceBtn">হাজিরা সংরক্ষণ করুন</button><button type="button" class="secondary" id="unlockAttendanceBtn" style="display:none">🔓 Edit করার জন্য Unlock</button><button type="button" class="secondary" id="markAllPresentBtn">সবাই উপস্থিত</button><button type="button" class="secondary" id="markAllAbsentBtn">সবাই অনুপস্থিত</button><button type="button" class="green" id="attendanceExportBtn">📥 হাজিরা Excel Export</button></div><p class="note">প্রতিটি Project ও তারিখ অনুযায়ী হাজিরা আলাদাভাবে সংরক্ষিত হবে। হাজিরা না দেওয়া সদস্যকে অনুপস্থিত হিসেবে গণনা করা হবে।</p></div></details>
+<details class="panel compact-section" style="border:1px solid #ffcc80;margin-top:14px"><summary>📅 দৈনিক কাজের হাজিরা</summary><div class="panel-content"><div class="grid"><div><label for="attendanceDate">কাজের তারিখ</label><input id="attendanceDate" type="date"></div><div style="display:flex;align-items:end"><button type="button" class="green" id="loadAttendanceBtn">তারিখ অনুযায়ী হাজিরা দেখুন</button></div></div><div class="stats" id="attendanceSummary" style="margin:10px 0">Project নির্বাচন করুন</div><div style="margin:8px 0"><div style="font-weight:bold;margin-bottom:6px">Master Roll Code অনুযায়ী হাজিরা নিন</div><div id="attendanceCodeCards" class="code-attendance-grid"></div><div class="note" style="margin-top:5px">Code-এ ক্লিক করলে সেই Code-এর সদস্যদের হাজিরা তালিকা খুলবে।</div></div><div class="tablewrap" style="height:300px;max-height:300px"><table><thead><tr><th>SR No.</th><th>Name</th><th>Job Card Number</th><th>কাজ করেছেন?</th></tr></thead><tbody id="attendanceTbody"></tbody></table></div><div class="actions"><button type="button" class="green" id="saveAttendanceBtn">হাজিরা সংরক্ষণ করুন</button><button type="button" class="secondary" id="unlockAttendanceBtn" style="display:none">🔓 Edit করার জন্য Unlock</button><button type="button" class="secondary" id="markAllPresentBtn">সবাই উপস্থিত</button><button type="button" class="secondary" id="markAllAbsentBtn">সবাই অনুপস্থিত</button><button type="button" class="green" id="attendanceExportBtn">📥 হাজিরা Excel Export</button></div><p class="note">প্রতিটি Project ও তারিখ অনুযায়ী হাজিরা আলাদাভাবে সংরক্ষিত হবে। হাজিরা না দেওয়া সদস্যকে অনুপস্থিত হিসেবে গণনা করা হবে।</p></div></details>
 </section></div>
 </main>
 <div class="modal-backdrop" id="groupManagerModal" role="dialog" aria-modal="true" aria-labelledby="groupManagerTitle">
  <div class="modal-box"><div class="modal-head"><h2 id="groupManagerTitle">সদস্যদের বিভাগ পরিবর্তন</h2><button type="button" class="danger" id="closeGroupManager">✕ বন্ধ</button></div>
- <p class="note">নাম অথবা Job Card Number দিয়ে খুঁজুন, checkbox-এ একাধিক সদস্য নির্বাচন করে এক ক্লিকে বিভাগ পরিবর্তন করুন।</p>
+ <p class="note">নাম অথবা Job Card Number দিয়ে খুঁজুন। একাধিক সদস্য নির্বাচন করে একসঙ্গে বিভাগ পরিবর্তন করুন।</p>
  <input id="groupManagerSearch" class="search" placeholder="সদস্যের নাম / Job Card Number খুঁজুন…" autocomplete="off">
- <div class="actions" style="margin:0 0 8px"><button type="button" class="secondary" id="groupManagerSelectVisible">দেখানো সবাই নির্বাচন</button><button type="button" class="secondary" id="groupManagerClearSelection">নির্বাচন বাতিল</button></div>
  <div class="modal-list" id="groupManagerList"></div>
- <div style="margin-top:12px"><label for="groupManagerTarget">যে বিভাগে দেবেন</label><select id="groupManagerTarget" style="width:100%;padding:11px;border:1px solid #ffcc80;border-radius:8px;font-size:16px;background:white"><option value="">সাধারণ তালিকা</option></select></div>
- <div class="actions"><button type="button" class="green" id="applyGroupManager">✓ নির্বাচিতদের বিভাগ পরিবর্তন করুন</button></div><div class="note" id="groupManagerCount">নির্বাচিত: 0 জন</div>
+ <div id="groupManagerTargetWrap" style="margin-top:6px"><label for="groupManagerTarget">যে বিভাগে দেবেন</label><select id="groupManagerTarget" style="width:100%;padding:11px;border:1px solid #ffcc80;border-radius:8px;font-size:16px;background:white"><option value="">সাধারণ তালিকা</option></select></div>
+ <div class="actions" id="groupManagerActions"><button type="button" class="secondary" id="groupManagerSelectVisible">দেখানো সবাই নির্বাচন</button><button type="button" class="secondary" id="groupManagerClearSelection">নির্বাচন বাতিল</button><button type="button" class="green" id="applyGroupManager">✓ নির্বাচিতদের বিভাগ পরিবর্তন করুন</button></div><div class="note" id="groupManagerCount">নির্বাচিত: 0 জন</div>
  </div>
 </div>
 <div class="modal-backdrop" id="projectCodeModal" role="dialog" aria-modal="true" aria-labelledby="projectCodeModalTitle">
@@ -118,7 +124,7 @@ let groupsFirebaseReady=false;let groupsSyncBusy=false;
 const ATTENDANCE_KEY="sahara_booth2_attendance_v1";
 const FIREBASE_ATTENDANCE_URL="https://jobcard-entry-form-default-rtdb.asia-southeast1.firebasedatabase.app/attendance.json";
 let memberGroups=[];let attendanceData={};let attendanceFirebaseReady=false;
-let selectedAttendanceCode="";
+let selectedAttendanceCode="__all__";
 const FIREBASE_PROJECTS_URL="https://jobcard-entry-form-default-rtdb.asia-southeast1.firebasedatabase.app/projects.json";
 let projects=[];let selectedProjectId="";let projectsFirebaseReady=false;let projectSyncChain=Promise.resolve();let projectSyncInProgress=false;
 function persist(){render();if(firebaseReady)syncToFirebase();else $("firebaseStatus").textContent="⚠️ Firebase সংযোগ নেই—ডাটা সংরক্ষণ হয়নি। Internet/Rules পরীক্ষা করুন।";}
@@ -131,16 +137,25 @@ function saveProjects(){renderProjects();render();if(projectsFirebaseReady)syncP
 function syncProjectsToFirebase(){const snapshot=JSON.stringify(projects);projectSyncInProgress=true;projectSyncChain=projectSyncChain.then(async()=>{const response=await fetch(FIREBASE_PROJECTS_URL,{method:"PUT",headers:{"Content-Type":"application/json"},body:snapshot});if(!response.ok)throw Error("HTTP "+response.status);}).catch(e=>{$("firebaseStatus").textContent="⚠️ Project Sync হয়নি—Internet/Rules পরীক্ষা করুন।";}).finally(()=>{projectSyncInProgress=false;});return projectSyncChain;}
 async function initializeProjectsFirebase(){try{const response=await fetch(FIREBASE_PROJECTS_URL,{cache:"no-store"});if(!response.ok)throw Error("HTTP "+response.status);const remote=await response.json();if(Array.isArray(remote)){projects=migrateProjectMemberKeys(remote);}else{const put=await fetch(FIREBASE_PROJECTS_URL,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(projects)});if(!put.ok)throw Error("HTTP "+put.status);}renderProjects();projectsFirebaseReady=true;setInterval(async()=>{try{if(projectSyncInProgress)return;const r=await fetch(FIREBASE_PROJECTS_URL,{cache:"no-store"});if(!r.ok)return;const latest=await r.json();if(Array.isArray(latest)){const normalized=migrateProjectMemberKeys(latest);if(JSON.stringify(normalized)!==JSON.stringify(projects)){projects=normalized;renderProjects();}}}catch(e){}},5000);}catch(e){renderProjects();}}
 function currentProject(){return projects.find(p=>p.id===selectedProjectId)||null;}
-function renderProjects(){const select=$("projectSelect");if(!select)return;const old=selectedProjectId;select.innerHTML=projects.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");if(projects.some(p=>p.id===old))select.value=old;else selectedProjectId=projects[0]?.id||"";renderSupervisorOptions();refreshProjectCodeFilter();renderProjectMembersPicker();renderCurrentProject();}
+function renderProjects(){const select=$("projectSelect");if(!select)return;const old=selectedProjectId;select.innerHTML=projects.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");if(projects.some(p=>p.id===old))select.value=old;else selectedProjectId=projects[0]?.id||"";renderSupervisorOptions();refreshProjectCodeFilter();renderProjectMembersPicker();renderCurrentProject();renderAttendanceCodeCards();}
 function allSupervisorIds(){const ids=new Set(rows.filter(r=>r.isSupervisor).map(r=>r.id));projects.forEach(p=>{if(p.supervisorId)ids.add(p.supervisorId);});return ids;}
 function registeredSupervisors(){const ids=allSupervisorIds();return rows.filter(r=>ids.has(r.id));}
 function renderSupervisorOptions(){const select=$("createProjectSupervisor");if(!select)return;const old=select.value;const list=registeredSupervisors();select.innerHTML='<option value="">Supervisor নির্বাচন করুন</option>'+list.map(r=>`<option value="${esc(r.id)}">${esc(r.name)} — ${esc(r.jobCardNumber)}</option>`).join("");if(list.some(r=>r.id===old))select.value=old;}
 function renderSupervisorRegistry(){const search=$("supervisorRegistrySearch"),select=$("supervisorRegistrySelect");if(!search||!select)return;const previousId=select.value;const q=search.value.toLowerCase().trim();const found=rows.filter(r=>[r.name,r.shortNumber,r.jobCardNumber,r.mobile||""].some(v=>String(v).toLowerCase().includes(q)));select.innerHTML='<option value="">'+(q?'মিলেছে '+found.length+' জন — নির্বাচন করুন':'Search করে সদস্য নির্বাচন করুন')+'</option>'+found.map(r=>`<option value="${esc(r.id)}">${esc(r.name)} — ${esc(r.jobCardNumber)}${allSupervisorIds().has(r.id)?' (Supervisor)':''}</option>`).join("");if(found.some(r=>r.id===previousId))select.value=previousId;const rec=rows.find(r=>r.id===select.value);$("supervisorRegistryStatus").textContent=rec?(allSupervisorIds().has(rec.id)?'নির্বাচিত ব্যক্তি বর্তমানে Supervisor।':'নির্বাচিত ব্যক্তি এখনো Supervisor নন।'):'';}
 function activeProjectForMember(memberId,exceptProjectId=""){return projects.find(p=>p.id!==exceptProjectId&&!p.completed&&(p.members||[]).includes(memberId))||null;}
 let selectedProjectCode="";
+function sortCodeMembers(list){
+ return (list||[]).slice().sort((a,b)=>{
+  const ao=Number(a.masterRollCodeOrder),bo=Number(b.masterRollCodeOrder);
+  const av=Number.isFinite(ao)&&ao>0?ao:Number.MAX_SAFE_INTEGER;
+  const bv=Number.isFinite(bo)&&bo>0?bo:Number.MAX_SAFE_INTEGER;
+  return av-bv||(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0)||String(a.name||'').localeCompare(String(b.name||''));
+ });
+}
 function projectCodeBuckets(){
  const supervisorIds=allSupervisorIds(),buckets={};
  rows.filter(r=>!supervisorIds.has(r.id)&&(r.masterRollCode||"").trim()).forEach(r=>{const code=String(r.masterRollCode).trim();(buckets[code]||(buckets[code]=[])).push(r);});
+ Object.keys(buckets).forEach(code=>buckets[code]=sortCodeMembers(buckets[code]));
  return buckets;
 }
 function renderProjectMembersPicker(){
@@ -156,14 +171,15 @@ function renderProjectMembersPicker(){
 }
 function openProjectCodeModal(code){
  selectedProjectCode=code;
- const p=currentProject(),chosen=(projectCodeBuckets()[code]||[]);
+ const p=currentProject(),chosen=sortCodeMembers(projectCodeBuckets()[code]||[]);
  $('projectCodeModalTitle').textContent='Master Roll Code: '+code+' — মোট '+chosen.length+' জন';
- $('projectCodeModalContent').innerHTML=`<div class="tablewrap" style="height:auto;max-height:62vh;margin-top:10px"><table style="min-width:460px"><thead><tr><th>SR No.</th><th>নাম</th><th>Job Card Number</th><th>অবস্থা</th><th>কাজ</th></tr></thead><tbody>${chosen.map((r,i)=>{const owner=activeProjectForMember(r.id,p?.id||'');const inThis=(p?.members||[]).includes(r.id);const status=inThis?'✓ এই Project-এ আছে':owner?'অন্য Project: '+esc(owner.name):'যোগ করা যাবে';return `<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.jobCardNumber)}</td><td>${status}</td><td><button type="button" class="danger" data-remove-code-member="${esc(r.id)}">এই Code থেকে বাদ দিন</button></td></tr>`;}).join('')}</tbody></table></div><p class="note">এই Code থেকে বাদ দিলে সদস্যের মূল Master Roll রেকর্ড ডিলিট হবে না। নির্বাচিত Project-এ আগে যোগ করা থাকলে শুধু এই Project থেকেও বাদ যাবে।</p>`;
+ $('projectCodeModalContent').innerHTML=`<div class="tablewrap" style="height:auto;max-height:62vh;margin-top:10px"><table style="min-width:520px"><thead><tr><th>SR No.</th><th>নাম</th><th>Job Card Number</th><th>অবস্থা</th><th>ক্রম / কাজ</th></tr></thead><tbody>${chosen.map((r,i,arr)=>{const owner=activeProjectForMember(r.id,p?.id||'');const inThis=(p?.members||[]).includes(r.id);const status=inThis?'✓ এই Project-এ আছে':owner?'অন্য Project: '+esc(owner.name):'যোগ করা যাবে';return `<tr data-code-sort-row="${esc(r.id)}"><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.jobCardNumber)}</td><td>${status}</td><td><button type="button" class="code-sort-handle secondary" aria-label="টেনে ক্রম পরিবর্তন করুন" title="ধরে টেনে যেখানে চান সেখানে ছাড়ুন" data-code-drag="${esc(r.id)}">☰ টেনে সাজান</button><button type="button" class="secondary" style="padding:5px 8px" data-move-code-member="${esc(r.id)}" data-direction="up" ${i===0?'disabled':''}>↑</button><button type="button" class="secondary" style="padding:5px 8px" data-move-code-member="${esc(r.id)}" data-direction="down" ${i===arr.length-1?'disabled':''}>↓</button><button type="button" class="danger" data-remove-code-member="${esc(r.id)}">এই Code থেকে বাদ দিন</button></td></tr>`;}).join('')}</tbody></table></div><p class="note">☰ বোতামটি ধরে সদস্যকে টেনে যেখানেই ছাড়বেন, সেখানেই তার নতুন ক্রম হবে। মোবাইলে আঙুল দিয়ে ধরে টানুন। ↑ / ↓ বোতামও ব্যবহার করতে পারবেন। এই ক্রম দৈনিক হাজিরা ও Project Excel-এ একইভাবে থাকবে।</p>`;
  $('projectCodeModal').classList.add('open');
 }
 function closeProjectCodeModal(){$('projectCodeModal').classList.remove('open');}
 $('closeProjectCodeModal').addEventListener('click',closeProjectCodeModal);
-$('projectCodeModal').addEventListener('click',e=>{if(e.target.id==='projectCodeModal')closeProjectCodeModal();});
+// Project Demand popup: backdrop/outside touch করলে বন্ধ হবে না; শুধু ✕ বন্ধ বোতামে বন্ধ হবে।
+$('projectCodeModal').addEventListener('click',e=>{if(e.target===$('projectCodeModal')){e.preventDefault();e.stopPropagation();}});
 
 function refreshProjectCodeFilter(){renderProjectMembersPicker();}
 
@@ -177,10 +193,54 @@ $("masterRollCodeInput").addEventListener("input",updateCodeMemberCount);
 $("codeMemberPicker").addEventListener("change",e=>{if(!e.target.classList.contains("codeMemberCheck"))return;if(e.target.checked)codeMemberSelectedIds.add(e.target.value);else codeMemberSelectedIds.delete(e.target.value);updateCodeMemberCount();});
 $("clearCodeSelectionBtn").onclick=()=>{codeMemberSelectedIds.clear();renderCodeMemberPicker();};
 $("selectVisibleCodeMembersBtn").onclick=()=>{document.querySelectorAll("#codeMemberPicker .codeMemberCheck").forEach(x=>codeMemberSelectedIds.add(x.value));renderCodeMemberPicker();};
-$("assignMasterRollCodeBtn").onclick=()=>{const code=$("masterRollCodeInput").value.trim();if(!code)return alert('আগে নিজের তৈরি Master Roll Code লিখুন।');const ids=[...codeMemberSelectedIds];if(!ids.length)return alert('এই Code-এর জন্য সদস্য নির্বাচন করুন।');const supervisorIds=allSupervisorIds();const valid=ids.filter(id=>rows.some(r=>r.id===id&&!supervisorIds.has(id)));if(valid.length!==ids.length)return alert('Supervisor-কে Master Roll Code দেওয়া যাবে না।');const existing=rows.filter(r=>r.masterRollCode===code&&!ids.includes(r.id)).length;if(existing+ids.length>10)return alert('একটি Master Roll Code-এ সর্বোচ্চ ১০ জন রাখা যাবে। বর্তমানে '+existing+' জন আছে; আপনি '+ids.length+' জন নির্বাচন করেছেন।');if(!confirm('নির্বাচিত '+ids.length+' জন সদস্যকে Master Roll Code “'+code+'” দেওয়া হবে। এগোবেন?'))return;ids.forEach(id=>{const r=rows.find(x=>x.id===id);if(r)r.masterRollCode=code;});codeMemberSelectedIds.clear();persist();refreshProjectCodeFilter();renderCodeMemberPicker();renderProjectMembersPicker();alert('Master Roll Code “'+code+'” অনুযায়ী '+ids.length+' জন সদস্য নির্ধারণ হয়েছে।');};
+$("assignMasterRollCodeBtn").onclick=()=>{const code=$("masterRollCodeInput").value.trim();if(!code)return alert('আগে নিজের তৈরি Master Roll Code লিখুন।');const ids=[...codeMemberSelectedIds];if(!ids.length)return alert('এই Code-এর জন্য সদস্য নির্বাচন করুন।');const supervisorIds=allSupervisorIds();const valid=ids.filter(id=>rows.some(r=>r.id===id&&!supervisorIds.has(id)));if(valid.length!==ids.length)return alert('Supervisor-কে Master Roll Code দেওয়া যাবে না।');const existing=rows.filter(r=>r.masterRollCode===code&&!ids.includes(r.id)).length;if(existing+ids.length>10)return alert('একটি Master Roll Code-এ সর্বোচ্চ ১০ জন রাখা যাবে। বর্তমানে '+existing+' জন আছে; আপনি '+ids.length+' জন নির্বাচন করেছেন।');if(!confirm('নির্বাচিত '+ids.length+' জন সদস্যকে Master Roll Code “'+code+'” দেওয়া হবে। এগোবেন?'))return;let nextOrder=rows.filter(r=>String(r.masterRollCode||'').trim()===code).reduce((m,r)=>Math.max(m,Number(r.masterRollCodeOrder)||0),0)+1;ids.forEach(id=>{const r=rows.find(x=>x.id===id);if(r){if(String(r.masterRollCode||'').trim()!==code)r.masterRollCodeOrder=nextOrder++;r.masterRollCode=code;}});codeMemberSelectedIds.clear();persist();refreshProjectCodeFilter();renderCodeMemberPicker();renderProjectMembersPicker();alert('Master Roll Code “'+code+'” অনুযায়ী '+ids.length+' জন সদস্য নির্ধারণ হয়েছে।');};
 $("projectCodeCards").addEventListener("click",e=>{const b=e.target.closest("[data-project-code]");if(!b)return;openProjectCodeModal(b.getAttribute("data-project-code"));});
-$("projectCodeModalContent").addEventListener("click",e=>{const btn=e.target.closest("button[data-remove-code-member]");if(!btn)return;const id=btn.getAttribute("data-remove-code-member");const r=rows.find(x=>x.id===id);if(!r||String(r.masterRollCode||"").trim()!==selectedProjectCode)return;const p=currentProject();const inThisProject=!!p&&(p.members||[]).includes(id);const message='“'+r.name+'”-কে Master Roll Code “'+selectedProjectCode+'” থেকে বাদ দেওয়া হবে।'+(inThisProject?' এবং নির্বাচিত Project “'+p.name+'” থেকেও বাদ দেওয়া হবে।':'')+'\n\nমূল Master Roll রেকর্ড, Job Card Number ও অন্যান্য তথ্য ডিলিট হবে না। এগোবেন?';if(!confirm(message))return;r.masterRollCode="";persist();if(inThisProject){p.members=(p.members||[]).filter(memberId=>memberId!==id);saveProjects();}renderCodeMemberPicker();renderProjectMembersPicker();renderCurrentProject();if((projectCodeBuckets()[selectedProjectCode]||[]).length)openProjectCodeModal(selectedProjectCode);else closeProjectCodeModal();alert('সদস্যকে Code থেকে বাদ দেওয়া হয়েছে। মূল Master Roll রেকর্ড অক্ষত আছে।');});
-$("addCodeMembersBtn").onclick=()=>{const p=currentProject();if(!p)return alert("আগে Project নির্বাচন করুন।");if(p.completed)return alert("এই Project-এর কাজ ইতিমধ্যে সম্পন্ন হয়েছে।");const buckets=projectCodeBuckets(),list=Object.values(buckets).flat();const added=[],skipped=[],already=[];p.members=p.members||[];list.forEach(r=>{if(p.members.includes(r.id)){already.push(r.name);return;}if(activeProjectForMember(r.id,p.id)){skipped.push(r.name);return;}p.members.push(r.id);added.push(r.name);});if(!added.length){renderProjectMembersPicker();return alert("সব Code-এর সদস্য পরীক্ষা করা হয়েছে। নতুন যোগ করার মতো কোনো সদস্য নেই।"+(skipped.length?" অন্য Project-এ থাকা: "+skipped.length+" জন।":""));}saveProjects();renderProjectMembersPicker();alert('সব Master Roll Code থেকে '+added.length+' জন সদস্য Project-এ যোগ হয়েছে।'+(already.length?' আগে থেকেই এই Project-এ ছিলেন: '+already.length+' জন।':'')+(skipped.length?' অন্য অসম্পন্ন Project-এ থাকায় যোগ হয়নি: '+skipped.length+' জন।':''));};
+function saveCodeMemberOrder(list){
+ list.forEach((r,i)=>{r.masterRollCodeOrder=i+1;});
+ // Persist the exact, unique order values before refreshing any list.
+ if(firebaseReady)syncToFirebase();
+ renderProjectMembersPicker();
+ renderAttendanceCodeCards();
+}
+function reorderCodeMember(id,targetId){
+ if(!id||!targetId||id===targetId)return;
+ const list=sortCodeMembers(projectCodeBuckets()[selectedProjectCode]||[]);
+ const from=list.findIndex(r=>r.id===id),to=list.findIndex(r=>r.id===targetId);
+ if(from<0||to<0)return;
+ const [moved]=list.splice(from,1);
+ list.splice(to,0,moved);
+ saveCodeMemberOrder(list);
+ openProjectCodeModal(selectedProjectCode);
+}
+let codeDragMemberId="";
+let codeDragTargetId="";
+$("projectCodeModalContent").addEventListener("click",e=>{
+ const move=e.target.closest("button[data-move-code-member]");
+ if(move){const id=move.getAttribute("data-move-code-member"),direction=move.getAttribute("data-direction"),list=sortCodeMembers(projectCodeBuckets()[selectedProjectCode]||[]),index=list.findIndex(x=>x.id===id),target=direction==='up'?index-1:index+1;if(index<0||target<0||target>=list.length)return;reorderCodeMember(id,list[target].id);return;}
+ const btn=e.target.closest("button[data-remove-code-member]");if(!btn)return;const id=btn.getAttribute("data-remove-code-member");const r=rows.find(x=>x.id===id);if(!r||String(r.masterRollCode||"").trim()!==selectedProjectCode)return;const p=currentProject();const inThisProject=!!p&&(p.members||[]).includes(id);const message='“'+r.name+'”-কে Master Roll Code “'+selectedProjectCode+'” থেকে বাদ দেওয়া হবে।'+(inThisProject?' এবং নির্বাচিত Project “'+p.name+'” থেকেও বাদ দেওয়া হবে।':'')+'\n\nমূল Master Roll রেকর্ড, Job Card Number ও অন্যান্য তথ্য ডিলিট হবে না। এগোবেন?';if(!confirm(message))return;r.masterRollCode="";delete r.masterRollCodeOrder;persist();if(inThisProject){p.members=(p.members||[]).filter(memberId=>memberId!==id);saveProjects();}renderCodeMemberPicker();renderProjectMembersPicker();renderCurrentProject();if((projectCodeBuckets()[selectedProjectCode]||[]).length)openProjectCodeModal(selectedProjectCode);else closeProjectCodeModal();alert('সদস্যকে Code থেকে বাদ দেওয়া হয়েছে। মূল Master Roll রেকর্ড অক্ষত আছে।');
+});
+$("projectCodeModalContent").addEventListener("pointerdown",e=>{
+ const handle=e.target.closest("[data-code-drag]");if(!handle)return;
+ codeDragMemberId=handle.getAttribute("data-code-drag");codeDragTargetId=codeDragMemberId;
+ handle.setPointerCapture?.(e.pointerId);e.preventDefault();
+ const row=handle.closest("tr");if(row)row.classList.add("code-row-dragging");
+});
+document.addEventListener("pointermove",e=>{
+ if(!codeDragMemberId)return;
+ const el=document.elementFromPoint(e.clientX,e.clientY);
+ const row=el?.closest?.("#projectCodeModalContent tr[data-code-sort-row]");
+ document.querySelectorAll("#projectCodeModalContent tr.code-row-over").forEach(x=>x.classList.remove("code-row-over"));
+ if(row){codeDragTargetId=row.getAttribute("data-code-sort-row");row.classList.add("code-row-over");}
+});
+function finishCodeMemberDrag(){
+ if(!codeDragMemberId)return;
+ const id=codeDragMemberId,target=codeDragTargetId;
+ document.querySelectorAll("#projectCodeModalContent tr.code-row-dragging,#projectCodeModalContent tr.code-row-over").forEach(x=>x.classList.remove("code-row-dragging","code-row-over"));
+ codeDragMemberId="";codeDragTargetId="";
+ if(target)reorderCodeMember(id,target);
+}
+document.addEventListener("pointerup",finishCodeMemberDrag);
+document.addEventListener("pointercancel",finishCodeMemberDrag);
 function renderCurrentProject(){const p=currentProject();const dates=p?(p.fromDate||p.toDate?` | সময়সীমা: ${p.fromDate||"—"} থেকে ${p.toDate||"—"}`:""):"";const status=p?(p.completed?" | ✓ কাজ সম্পন্ন":" | চলমান"):"";const supervisorRecord=p?.supervisorId?rows.find(r=>r.id===p.supervisorId):null;$("projectCount").textContent="Project-এর সদস্য: "+(p?.members?.length||0)+dates+status+(supervisorRecord?" | Supervisor: "+supervisorRecord.name:" | Supervisor: নির্ধারিত নয়");const members=(p?.members||[]).map(id=>rows.find(r=>r.id===id)).filter(Boolean).sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));const q=($("projectMemberSearch")?.value||"").toLowerCase().trim();const visibleMembers=members.filter(r=>[r.name,r.shortNumber,r.jobCardNumber,r.mobile||""].some(v=>String(v||"").toLowerCase().includes(q)));$("projectTbody").innerHTML=visibleMembers.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.jobCardNumber)}</td><td>${esc(r.mobile||"")}</td><td><button type="button" class="danger" data-remove-member="${esc(r.id)}">বাদ দিন</button></td></tr>`).join("");$("projectExportBtn").disabled=!p;$("deleteProjectBtn").disabled=!p;$("completeProjectBtn").disabled=!p||!!p.completed;$("completeProjectBtn").textContent=p?.completed?"✓ কাজ সম্পন্ন হয়েছে":"✓ Project-এর কাজ সম্পন্ন";}
 window.removeProjectMember=memberId=>{const p=currentProject();if(!p)return;const id=String(memberId);const before=(p.members||[]).length;p.members=(p.members||[]).filter(m=>String(m)!==id);if(p.members.length===before)return;saveProjects();}; 
 $("projectTbody").addEventListener("click",e=>{const btn=e.target.closest("button[data-remove-member]");if(!btn)return;removeProjectMember(btn.getAttribute("data-remove-member"));});
@@ -269,13 +329,39 @@ function renderGroupOptions(){
 function renderGroupList(){const box=$('groupList');if(!box)return;box.innerHTML=memberGroups.length?memberGroups.map(g=>`<span style="display:inline-flex;align-items:center;gap:5px;background:#fff0d9;padding:6px 9px;border-radius:7px;margin:3px">${esc(g)} <button type="button" class="danger" style="margin:0;padding:3px 7px" data-del-group="${esc(g)}">×</button></span>`).join(''):'এখনও কোনো বিভাগ তৈরি করা হয়নি।';}
 $('createGroupBtn').onclick=()=>{const name=$('newGroupName').value.trim();if(!name)return alert('বিভাগের নাম লিখুন।');if(memberGroups.some(g=>g.toLowerCase()===name.toLowerCase()))return alert('এই বিভাগটি আগে থেকেই আছে।');memberGroups.push(name);saveGroupsLocal();syncGroupsToFirebase();$('newGroupName').value='';renderGroupOptions();renderGroupList();render();};
 $('groupList').addEventListener('click',e=>{const b=e.target.closest('[data-del-group]');if(!b)return;const g=b.getAttribute('data-del-group');if(rows.some(r=>r.groupName===g)&&!confirm('এই বিভাগে সদস্য আছে। বিভাগটি মুছলে তাঁদের সাধারণ তালিকায় রাখা হবে। এগোবেন?'))return;rows.forEach(r=>{if(r.groupName===g)r.groupName='';});memberGroups=memberGroups.filter(x=>x!==g);saveGroupsLocal();syncGroupsToFirebase();if(firebaseReady)syncToFirebase();renderGroupOptions();renderGroupList();render();});
-function attendanceKey(projectId,date){return String(projectId)+'|'+String(date);}
-function attendanceMembersForProject(p){
- const supervisorIds=allSupervisorIds();
- return (p?.members||[]).map(id=>rows.find(r=>r.id===id)).filter(r=>r&&!supervisorIds.has(r.id)).sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));
+function attendanceKey(projectId,date,code=''){return String(projectId)+'|'+String(date)+(code&&code!=='__all__'?'|code:'+String(code):'');}
+// পুরোনো Project+Date হাজিরা এবং নতুন Code-wise হাজিরা—দুটিই পড়ার ব্যবস্থা।
+function getAttendanceRecord(p,date,code=selectedAttendanceCode){
+ const legacyKey=attendanceKey(p.id,date,'__all__');
+ const legacy=attendanceData[legacyKey]&&typeof attendanceData[legacyKey]==='object'?attendanceData[legacyKey]:{};
+ if(!code||code==='__all__')return legacy;
+ const codeKey=attendanceKey(p.id,date,code);
+ const specific=attendanceData[codeKey];
+ if(specific&&typeof specific==='object')return specific;
+ // পুরোনো পূর্ণ হাজিরা থেকে নির্বাচিত Code-এর সদস্যদের হাজিরা দেখাও; পুরোনো ডাটা অপরিবর্তিত থাকবে।
+ const ids=new Set(attendanceMembersForProject(p).map(r=>r.id));
+ const subset={};Object.keys(legacy).forEach(k=>{if(ids.has(k))subset[k]=legacy[k];});
+ if(legacy._locked!==undefined)subset._locked=legacy._locked;
+ return subset;
 }
+function attendanceMembersForProject(p){
+ const supervisorIds=allSupervisorIds(),code=selectedAttendanceCode;
+ let members=(p?.members||[]).map(id=>rows.find(r=>r.id===id)).filter(r=>r&&!supervisorIds.has(r.id));
+ if(code&&code!=='__all__')members=members.filter(r=>String(r.masterRollCode||'').trim()===code);
+ if(code&&code!=='__all__')return sortCodeMembers(members);
+ return members.sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));
+}
+function renderAttendanceCodeCards(){
+ const box=$('attendanceCodeCards'),p=currentProject();if(!box)return;
+ if(!p){box.innerHTML='';return;}
+ const supervisorIds=allSupervisorIds(),members=(p.members||[]).map(id=>rows.find(r=>r.id===id)).filter(r=>r&&!supervisorIds.has(r.id));
+ const codes=[...new Set(members.map(r=>String(r.masterRollCode||'').trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,undefined,{numeric:true,sensitivity:'base'}));
+ if(selectedAttendanceCode!=='__all__'&&!codes.includes(selectedAttendanceCode))selectedAttendanceCode='__all__';
+ box.innerHTML=`<button type="button" class="code-attendance-card ${selectedAttendanceCode==='__all__'?'active':''}" data-attendance-code="__all__"><strong>সব Code</strong><small>মোট ${members.length} জন</small></button>`+codes.map(code=>{const n=members.filter(r=>String(r.masterRollCode||'').trim()===code).length;return `<button type="button" class="code-attendance-card ${selectedAttendanceCode===code?'active':''}" data-attendance-code="${esc(code)}"><strong>${esc(code)}</strong><small>মোট ${n} জন</small></button>`;}).join('');
+}
+$('attendanceCodeCards').addEventListener('click',e=>{const b=e.target.closest('[data-attendance-code]');if(!b)return;selectedAttendanceCode=b.getAttribute('data-attendance-code');renderAttendance();});
 function getCurrentAttendanceMap(p,date){
- const saved=attendanceData[attendanceKey(p.id,date)]||{};
+ const saved=getAttendanceRecord(p,date,selectedAttendanceCode);
  const currentChecks=[...document.querySelectorAll('.attendanceCheck')];
  const currentMap={};
  currentChecks.forEach(x=>currentMap[x.dataset.member]=x.checked);
@@ -285,10 +371,11 @@ function renderCodeAttendanceSummary(){ /* মূল checkbox হাজিরা
 
 function renderAttendance(){
  const p=currentProject(),date=$('attendanceDate')?.value||'',body=$('attendanceTbody');
+ renderAttendanceCodeCards();
  if(!body)return;
  if(!p||!date){body.innerHTML='';$('attendanceSummary').textContent='Project ও তারিখ নির্বাচন করুন';$('unlockAttendanceBtn').style.display='none';$('saveAttendanceBtn').disabled=true;renderCodeAttendanceSummary();return;}
- const members=attendanceMembersForProject(p),saved=attendanceData[attendanceKey(p.id,date)]||{},locked=saved._locked===true;
- body.innerHTML=members.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.jobCardNumber)}</td><td><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="attendanceCheck" data-member="${esc(r.id)}" ${saved[r.id]===true?'checked':''} ${locked?'disabled':''} style="width:18px;height:18px"> উপস্থিত</label></td></tr>`).join('')||'<tr><td colspan="4">এই Project-এ কোনো সদস্য নেই।</td></tr>';
+ const members=attendanceMembersForProject(p),saved=getAttendanceRecord(p,date,selectedAttendanceCode),locked=saved._locked===true;
+ body.innerHTML=members.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.jobCardNumber)}</td><td><label style="display:flex;align-items:center;gap:6px;margin:0"><input type="checkbox" class="attendanceCheck" data-member="${esc(r.id)}" ${saved[r.id]===true?'checked':''} ${locked?'disabled':''} style="width:18px;height:18px"> উপস্থিত</label></td></tr>`).join('')||'<tr><td colspan="4">এই Code-এ নির্বাচিত Project-এর কোনো সদস্য নেই।</td></tr>';
  $('saveAttendanceBtn').disabled=locked;$('saveAttendanceBtn').textContent=locked?'✓ হাজিরা Lock করা আছে':'হাজিরা সংরক্ষণ করুন';
  $('unlockAttendanceBtn').style.display=locked?'inline-block':'none';$('attendanceSummary').dataset.locked=locked?'true':'false';updateAttendanceSummary();
 }
@@ -298,17 +385,21 @@ function updateAttendanceSummary(){
 }
 $('attendanceTbody').addEventListener('change',updateAttendanceSummary);
 $('loadAttendanceBtn').onclick=renderAttendance;$('attendanceDate').addEventListener('change',renderAttendance);
-$('saveAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanceDate').value;if(!p)return alert('আগে Project নির্বাচন করুন।');if(!date)return alert('কাজের তারিখ নির্বাচন করুন।');const key=attendanceKey(p.id,date),old=attendanceData[key]||{};if(old._locked===true)return alert('এই তারিখের হাজিরা Lock করা আছে। আগে Unlock করুন।');const obj={};document.querySelectorAll('.attendanceCheck').forEach(x=>obj[x.dataset.member]=x.checked);obj._locked=true;attendanceData[key]=obj;saveAttendanceLocal();renderAttendance();alert('দৈনিক হাজিরা সংরক্ষণ হয়েছে এবং Lock করা হয়েছে। Edit করতে Unlock করুন।');};
-$('unlockAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanceDate').value;if(!p||!date)return;const key=attendanceKey(p.id,date),saved=attendanceData[key];if(!saved||saved._locked!==true)return;if(!confirm('এই তারিখের হাজিরা Unlock করে Edit করার অনুমতি দেবেন?'))return;saved._locked=false;attendanceData[key]=saved;saveAttendanceLocal();renderAttendance();};
+$('saveAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanceDate').value;if(!p)return alert('আগে Project নির্বাচন করুন।');if(!date)return alert('কাজের তারিখ নির্বাচন করুন।');const key=attendanceKey(p.id,date,selectedAttendanceCode),old=getAttendanceRecord(p,date,selectedAttendanceCode);if(old._locked===true)return alert('এই তারিখের হাজিরা Lock করা আছে। আগে Unlock করুন।');const obj={};document.querySelectorAll('.attendanceCheck').forEach(x=>obj[x.dataset.member]=x.checked);obj._locked=true;attendanceData[key]=obj;saveAttendanceLocal();renderAttendance();alert('দৈনিক হাজিরা সংরক্ষণ হয়েছে এবং Lock করা হয়েছে। Edit করতে Unlock করুন।');};
+$('unlockAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanceDate').value;if(!p||!date)return;const key=attendanceKey(p.id,date,selectedAttendanceCode),saved=getAttendanceRecord(p,date,selectedAttendanceCode);if(!saved||saved._locked!==true)return;if(!confirm('এই তারিখের হাজিরা Unlock করে Edit করার অনুমতি দেবেন?'))return;const copy={};attendanceMembersForProject(p).forEach(m=>{if(Object.prototype.hasOwnProperty.call(saved,m.id))copy[m.id]=saved[m.id];});copy._locked=false;attendanceData[key]=copy;saveAttendanceLocal();renderAttendance();};
 $('markAllPresentBtn').onclick=()=>{if($('saveAttendanceBtn').disabled)return;document.querySelectorAll('.attendanceCheck').forEach(x=>x.checked=true);updateAttendanceSummary();};
 $('markAllAbsentBtn').onclick=()=>{if($('saveAttendanceBtn').disabled)return;document.querySelectorAll('.attendanceCheck').forEach(x=>x.checked=false);updateAttendanceSummary();};
-$('attendanceExportBtn').onclick=async()=>{const p=currentProject();if(!p)return alert('আগে Project নির্বাচন করুন।');if(typeof ExcelJS==='undefined')return alert('ExcelJS লোড হয়নি।');const members=(p.members||[]).map(id=>rows.find(r=>r.id===id)).filter(Boolean).sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));const dates=[...new Set(Object.keys(attendanceData).filter(k=>k.startsWith(String(p.id)+'|')).map(k=>k.slice(String(p.id).length+1)))].sort();const wb=new ExcelJS.Workbook(),ws=wb.addWorksheet('Attendance');const headers=['SR No.','Name','Job Card Number','কাজের দিন'];const data=members.map((r,i)=>[i+1,r.name||'',r.jobCardNumber||'',dates.filter(d=>attendanceData[attendanceKey(p.id,d)]?.[r.id]===true).length]);styleExportSheet(ws,headers,data,'ATTENDANCE SUMMARY 2026',{1:'সর্বমোট সদস্য',4:members.length});await downloadWorkbook(wb,'Attendance_'+(p.name||'Project').replace(/[^a-z0-9-_ ]/gi,'_').trim().replace(/\s+/g,'_')+'.xlsx');};
-async function initializeAttendanceFirebase(){try{const r=await fetch(FIREBASE_ATTENDANCE_URL,{cache:'no-store'});if(!r.ok)throw Error();const remote=await r.json();if(remote&&typeof remote==='object'&&!Array.isArray(remote))attendanceData=remote;else await fetch(FIREBASE_ATTENDANCE_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(attendanceData)});safeLocalSet(ATTENDANCE_KEY,attendanceData);attendanceFirebaseReady=true;renderAttendance();}catch(e){attendanceFirebaseReady=false;}}
+$('attendanceExportBtn').onclick=async()=>{const p=currentProject();if(!p)return alert('আগে Project নির্বাচন করুন।');if(typeof ExcelJS==='undefined')return alert('ExcelJS লোড হয়নি।');const members=(p.members||[]).map(id=>rows.find(r=>r.id===id)).filter(Boolean).sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));const attendanceKeys=Object.keys(attendanceData).filter(k=>k.startsWith(String(p.id)+'|'));const dates=[...new Set(attendanceKeys.map(k=>k.slice(String(p.id).length+1).split('|')[0]))].sort();const wb=new ExcelJS.Workbook(),ws=wb.addWorksheet('Attendance');const headers=['SR No.','Name','Job Card Number','কাজের দিন'];const data=members.map((r,i)=>[i+1,r.name||'',r.jobCardNumber||'',dates.filter(d=>attendanceKeys.some(k=>k.startsWith(String(p.id)+'|'+d)&&attendanceData[k]?.[r.id]===true)).length]);styleExportSheet(ws,headers,data,'ATTENDANCE SUMMARY 2026',{1:'সর্বমোট সদস্য',4:members.length});await downloadWorkbook(wb,'Attendance_'+(p.name||'Project').replace(/[^a-z0-9-_ ]/gi,'_').trim().replace(/\s+/g,'_')+'.xlsx');};
+async function initializeAttendanceFirebase(){try{const r=await fetch(FIREBASE_ATTENDANCE_URL,{cache:'no-store'});if(!r.ok)throw Error();const remote=await r.json();if(remote&&typeof remote==='object'&&!Array.isArray(remote)){const local=attendanceData;attendanceData={...local,...remote};if(JSON.stringify(attendanceData)!==JSON.stringify(remote)){const put=await fetch(FIREBASE_ATTENDANCE_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(attendanceData)});if(!put.ok)throw Error('HTTP '+put.status);}}else{const put=await fetch(FIREBASE_ATTENDANCE_URL,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(attendanceData)});if(!put.ok)throw Error('HTTP '+put.status);}safeLocalSet(ATTENDANCE_KEY,attendanceData);attendanceFirebaseReady=true;renderAttendance();}catch(e){attendanceFirebaseReady=false;}}
 function makeFull(v){const m=String(v||"").trim().match(/^(\d{1,3})\/(\d+)$/);return m?"WB-09-008-003-"+m[1].padStart(3,"0")+"/"+m[2]:"";}
 $("shortNumber").addEventListener("input",()=>{$("jobPreview").textContent=makeFull($("shortNumber").value)||"WB-09-008-003-…";});
+function normalizeJobCard(value){return String(value||"").toUpperCase().replace(/\s+/g,"").trim();}
+function normalizeMemberName(value){return String(value||"").trim().replace(/\s+/g," ").toLocaleUpperCase();}
+function renderDuplicateList(){const q=($("duplicateSearch")?.value||"").toLowerCase().trim();const groups=new Map();rows.forEach((r,i)=>{const job=normalizeJobCard(r.jobCardNumber||makeFull(r.shortNumber||""));const name=normalizeMemberName(r.name);if(!job||!name)return;const key=JSON.stringify([name,job]);if(!groups.has(key))groups.set(key,{name:r.name||"",job,list:[]});groups.get(key).list.push({...r,_rowIndex:i});});const duplicates=[...groups.values()].filter(x=>x.list.length>1).filter(x=>!q||x.job.toLowerCase().includes(q)||String(x.name).toLowerCase().includes(q)).sort((a,b)=>a.name.localeCompare(b.name)||a.job.localeCompare(b.job));const total=[...groups.values()].filter(x=>x.list.length>1).length;$("duplicateSummary").textContent="ডুপ্লিকেট নাম + Job Card: "+total+"টি | সংশ্লিষ্ট রেকর্ড: "+duplicates.reduce((n,x)=>n+x.list.length,0)+"টি";$("duplicateTbody").innerHTML=duplicates.map(x=>`<tr><td><strong>${esc(x.job)}</strong></td><td>${x.list.map(r=>esc(r.name||"")).join("<br>")}</td><td>${x.list.length} বার</td><td>${x.list.map(r=>esc(r.masterRollNo||r._rowIndex+1)).join(", ")}</td></tr>`).join("")||'<tr><td colspan="4" style="text-align:center">'+(total?"এই Search-এ কোনো ডুপ্লিকেট পাওয়া যায়নি।":"কোনো ডুপ্লিকেট পাওয়া যায়নি।")+'</td></tr>';}
+
 function render(){const q=$("search").value.toLowerCase().trim();const groupFilter=$("recordGroupFilter")?.value??"__all__";const filtered=rows.map((r,i)=>({...r,_i:i})).filter(r=>(groupFilter==="__all__"||(r.groupName||"")===groupFilter)&&[r.name,r.shortNumber,r.jobCardNumber,r.mobile||""].some(v=>String(v).toLowerCase().includes(q))).sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));
 const supervisorIds=allSupervisorIds();const supervisorCount=rows.filter(r=>supervisorIds.has(r.id)).length;const jobcardCount=rows.length-supervisorCount;$("count").textContent="মোট সদস্য: "+rows.length+" | Job Card সদস্য: "+jobcardCount+" | Supervisor: "+supervisorCount+" | প্রদর্শিত: "+filtered.length;
-$("tbody").innerHTML=filtered.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.jobCardNumber)}</td><td>${esc(r.mobile||"")}</td><td><button type="button" class="secondary" onclick="openGroupManager('${esc(r.id)}')">বিভাগ পরিবর্তন</button><button class="secondary" onclick="editRow(${r._i})">Edit</button><button class="danger" onclick="deleteRow(${r._i})">Delete</button></td></tr>`).join("");renderSupervisorOptions();renderSupervisorRegistry();refreshProjectCodeFilter();renderCodeMemberPicker();
+$("tbody").innerHTML=filtered.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${esc(r.jobCardNumber)}</td><td>${esc(r.mobile||"")}</td><td><button type="button" class="secondary" onclick="openGroupManager('${esc(r.id)}')">বিভাগ পরিবর্তন</button><button class="secondary" onclick="editRow(${r._i})">Edit</button><button class="danger" onclick="deleteRow(${r._i})">Delete</button></td></tr>`).join("");renderSupervisorOptions();renderSupervisorRegistry();refreshProjectCodeFilter();renderCodeMemberPicker();renderDuplicateList();
 }
 
 let groupManagerSelectedId="";const groupManagerSelectedIds=new Set();
@@ -316,9 +407,10 @@ function renderGroupManager(){const q=$('groupManagerSearch').value.toLowerCase(
 function openGroupManager(id=''){groupManagerSelectedIds.clear();groupManagerSelectedId=id;if(id)groupManagerSelectedIds.add(id);$('groupManagerSearch').value='';const sel=$('groupManagerTarget');sel.innerHTML='<option value="">সাধারণ তালিকা</option>'+memberGroups.map(g=>`<option value="${esc(g)}">${esc(g)}</option>`).join('');$('groupManagerModal').classList.add('open');renderGroupManager();}
 window.openGroupManager=openGroupManager;
 $('closeGroupManager').onclick=()=>{$('groupManagerModal').classList.remove('open');groupManagerSelectedId='';groupManagerSelectedIds.clear();};
-$('groupManagerModal').addEventListener('click',e=>{if(e.target===$('groupManagerModal'))$('closeGroupManager').click();});
+$('groupManagerModal').addEventListener('click',e=>{if(e.target!==$('groupManagerModal'))e.stopPropagation();});
 $('groupManagerSearch').addEventListener('input',renderGroupManager);
 $('groupManagerList').addEventListener('change',e=>{if(e.target.classList.contains('groupManagerCheck')){if(e.target.checked)groupManagerSelectedIds.add(e.target.value);else groupManagerSelectedIds.delete(e.target.value);$('groupManagerCount').textContent='নির্বাচিত: '+groupManagerSelectedIds.size+' জন';}});
+$('groupManagerList').addEventListener('click',e=>e.stopPropagation());
 $('groupManagerSelectVisible').onclick=()=>{document.querySelectorAll('#groupManagerList .groupManagerCheck').forEach(x=>{x.checked=true;groupManagerSelectedIds.add(x.value);});$('groupManagerCount').textContent='নির্বাচিত: '+groupManagerSelectedIds.size+' জন';};
 $('groupManagerClearSelection').onclick=()=>{groupManagerSelectedIds.clear();document.querySelectorAll('#groupManagerList .groupManagerCheck').forEach(x=>x.checked=false);groupManagerSelectedId='';$('groupManagerCount').textContent='নির্বাচিত: 0 জন';};
 $('applyGroupManager').onclick=()=>{const ids=[...groupManagerSelectedIds];if(!ids.length)return alert('অন্তত একজন সদস্য নির্বাচন করুন।');const target=$('groupManagerTarget').value||'';const supervisorIds=allSupervisorIds();ids.forEach(id=>{const r=rows.find(x=>x.id===id);if(r&&!supervisorIds.has(id))r.groupName=target;});persist();alert(ids.length+' জন সদস্যের বিভাগ পরিবর্তন হয়েছে।');$('groupManagerModal').classList.remove('open');groupManagerSelectedId='';groupManagerSelectedIds.clear();};
@@ -329,6 +421,7 @@ $("entryForm").addEventListener("submit",e=>{
  e.preventDefault();
  const inputNum=$("shortNumber").value.trim();
  if(!$("name").value.trim()||!inputNum||!makeFull(inputNum)||!/^\d{1,3}\/\d+$/.test(inputNum)){alert("Sort Number এইভাবে লিখুন: 09/100");return;}
+ const newJobCardKey=normalizeJobCard(makeFull(inputNum));const newNameKey=normalizeMemberName($("name").value);const duplicate=rows.findIndex((r,i)=>i!==editIndex&&normalizeJobCard(r.jobCardNumber||makeFull(r.shortNumber||""))===newJobCardKey&&normalizeMemberName(r.name)===newNameKey);if(duplicate!==-1){const d=rows[duplicate];alert("⚠️ একই নাম ও একই Job Card Number-এর রেকর্ড আগে থেকেই আছে!\n\nনাম: "+(d.name||"")+"\nJob Card Number: "+(d.jobCardNumber||"")+"\n\nএই একই তথ্য দিয়ে নতুন Entry করা যাবে না।");return;}
  let item;
  if(editIndex<0){
    item={id:"m"+Date.now().toString(36)+Math.random().toString(36).slice(2,8),name:$("name").value.trim().toUpperCase(),shortNumber:inputNum,jobCardNumber:makeFull(inputNum),mobile:$("mobile").value.trim(),groupName:$("memberGroup").value||"",masterRollNo:nextMasterRollNo,masterRollCode:"",sourceGroup:"new",isSupervisor:false};
@@ -344,7 +437,7 @@ $("entryForm").addEventListener("submit",e=>{
 $("clearBtn").onclick=()=>{editIndex=-1;$("entryForm").reset();$("memberGroup").value="";$("saveBtn").textContent="ডাটা Save করুন";};
 window.editRow=i=>{const r=rows[i];$("name").value=r.name;$("memberGroup").value=r.groupName||"";$("shortNumber").value=r.shortNumber;$("mobile").value=r.mobile||"";$("jobPreview").textContent=r.jobCardNumber;editIndex=i;$("saveBtn").textContent="Update করুন";window.scrollTo({top:0,behavior:"smooth"});};
 window.deleteRow=i=>{if(confirm("এই রেকর্ডটি Delete করবেন?")){rows.splice(i,1);if(editIndex===i)editIndex=-1;persist();}};
-$("search").addEventListener("input",render);$("recordGroupFilter").addEventListener("change",render);
+$("search").addEventListener("input",render);$("recordGroupFilter").addEventListener("change",render);$("duplicateSearch").addEventListener("input",renderDuplicateList);
 function styleExportSheet(ws,headers,data,titleName,totalRowValues={}){
   const cream="FFFFF7ED",orange="FFFF9933",yellow="FF138808",border="FFFFCC80";
   ws.mergeCells(1,1,1,headers.length);ws.getCell(1,1).value="SAHARA BOOTH";
