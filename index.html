@@ -334,7 +334,18 @@ function attendanceKey(projectId,date,code=''){return String(projectId)+'|'+Stri
 function getAttendanceRecord(p,date,code=selectedAttendanceCode){
  const legacyKey=attendanceKey(p.id,date,'__all__');
  const legacy=attendanceData[legacyKey]&&typeof attendanceData[legacyKey]==='object'?attendanceData[legacyKey]:{};
- if(!code||code==='__all__')return legacy;
+ if(!code||code==='__all__'){
+  // সব Code তালিকায় পুরোনো হাজিরার সঙ্গে Code-wise সংরক্ষিত হাজিরাও একত্রে দেখাও।
+  const merged={...legacy},members=attendanceMembersForProject(p);
+  const codes=[...new Set(members.map(r=>String(r.masterRollCode||'').trim()).filter(Boolean))];
+  const codeRecords=codes.map(c=>attendanceData[attendanceKey(p.id,date,c)]).filter(v=>v&&typeof v==='object');
+  codeRecords.forEach(record=>Object.keys(record).forEach(k=>{if(k!=='_locked')merged[k]=record[k];}));
+  const allCoded=members.length>0&&members.every(r=>String(r.masterRollCode||'').trim());
+  if(legacy._locked===true)merged._locked=true;
+  else if(allCoded&&codes.length&&codeRecords.length===codes.length&&codeRecords.every(r=>r._locked===true))merged._locked=true;
+  else merged._locked=false;
+  return merged;
+ }
  const codeKey=attendanceKey(p.id,date,code);
  const specific=attendanceData[codeKey];
  if(specific&&typeof specific==='object')return specific;
@@ -385,8 +396,17 @@ function updateAttendanceSummary(){
 }
 $('attendanceTbody').addEventListener('change',updateAttendanceSummary);
 $('loadAttendanceBtn').onclick=renderAttendance;$('attendanceDate').addEventListener('change',renderAttendance);
-$('saveAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanceDate').value;if(!p)return alert('আগে Project নির্বাচন করুন।');if(!date)return alert('কাজের তারিখ নির্বাচন করুন।');const key=attendanceKey(p.id,date,selectedAttendanceCode),old=getAttendanceRecord(p,date,selectedAttendanceCode);if(old._locked===true)return alert('এই তারিখের হাজিরা Lock করা আছে। আগে Unlock করুন।');const obj={};document.querySelectorAll('.attendanceCheck').forEach(x=>obj[x.dataset.member]=x.checked);obj._locked=true;attendanceData[key]=obj;saveAttendanceLocal();renderAttendance();alert('দৈনিক হাজিরা সংরক্ষণ হয়েছে এবং Lock করা হয়েছে। Edit করতে Unlock করুন।');};
-$('unlockAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanceDate').value;if(!p||!date)return;const key=attendanceKey(p.id,date,selectedAttendanceCode),saved=getAttendanceRecord(p,date,selectedAttendanceCode);if(!saved||saved._locked!==true)return;if(!confirm('এই তারিখের হাজিরা Unlock করে Edit করার অনুমতি দেবেন?'))return;const copy={};attendanceMembersForProject(p).forEach(m=>{if(Object.prototype.hasOwnProperty.call(saved,m.id))copy[m.id]=saved[m.id];});copy._locked=false;attendanceData[key]=copy;saveAttendanceLocal();renderAttendance();};
+$('saveAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanceDate').value;if(!p)return alert('আগে Project নির্বাচন করুন।');if(!date)return alert('কাজের তারিখ নির্বাচন করুন।');const old=getAttendanceRecord(p,date,selectedAttendanceCode);if(old._locked===true)return alert('এই তারিখের হাজিরা Lock করা আছে। আগে Unlock করুন।');const checks=[...document.querySelectorAll('.attendanceCheck')];if(selectedAttendanceCode==='__all__'){
+  const grouped={};checks.forEach(x=>{const member=rows.find(r=>r.id===x.dataset.member),code=String(member?.masterRollCode||'').trim()||'__uncoded__';(grouped[code]||(grouped[code]={}))[x.dataset.member]=x.checked;});
+  Object.keys(grouped).forEach(code=>{const obj={...grouped[code],_locked:true};attendanceData[code==='__uncoded__'?attendanceKey(p.id,date,'__all__'):attendanceKey(p.id,date,code)]=obj;});
+ }else{const obj={};checks.forEach(x=>obj[x.dataset.member]=x.checked);obj._locked=true;attendanceData[attendanceKey(p.id,date,selectedAttendanceCode)]=obj;}
+ saveAttendanceLocal();renderAttendance();alert('দৈনিক হাজিরা সংরক্ষণ হয়েছে এবং Lock করা হয়েছে। Edit করতে Unlock করুন।');};
+$('unlockAttendanceBtn').onclick=()=>{const p=currentProject(),date=$('attendanceDate').value;if(!p||!date)return;const saved=getAttendanceRecord(p,date,selectedAttendanceCode);if(!saved||saved._locked!==true)return;if(!confirm('এই তারিখের হাজিরা Unlock করে Edit করার অনুমতি দেবেন?'))return;if(selectedAttendanceCode==='__all__'){
+  const members=attendanceMembersForProject(p),codes=[...new Set(members.map(r=>String(r.masterRollCode||'').trim()).filter(Boolean))];
+  codes.forEach(code=>{const key=attendanceKey(p.id,date,code),record=attendanceData[key];if(record&&typeof record==='object')attendanceData[key]={...record,_locked:false};});
+  const legacyKey=attendanceKey(p.id,date,'__all__');if(attendanceData[legacyKey]&&typeof attendanceData[legacyKey]==='object')attendanceData[legacyKey]={...attendanceData[legacyKey],_locked:false};
+ }else{const key=attendanceKey(p.id,date,selectedAttendanceCode),copy={};attendanceMembersForProject(p).forEach(m=>{if(Object.prototype.hasOwnProperty.call(saved,m.id))copy[m.id]=saved[m.id];});copy._locked=false;attendanceData[key]=copy;}
+ saveAttendanceLocal();renderAttendance();};
 $('markAllPresentBtn').onclick=()=>{if($('saveAttendanceBtn').disabled)return;document.querySelectorAll('.attendanceCheck').forEach(x=>x.checked=true);updateAttendanceSummary();};
 $('markAllAbsentBtn').onclick=()=>{if($('saveAttendanceBtn').disabled)return;document.querySelectorAll('.attendanceCheck').forEach(x=>x.checked=false);updateAttendanceSummary();};
 $('attendanceExportBtn').onclick=async()=>{const p=currentProject();if(!p)return alert('আগে Project নির্বাচন করুন।');if(typeof ExcelJS==='undefined')return alert('ExcelJS লোড হয়নি।');const members=(p.members||[]).map(id=>rows.find(r=>r.id===id)).filter(Boolean).sort((a,b)=>(Number(a.masterRollNo)||0)-(Number(b.masterRollNo)||0));const attendanceKeys=Object.keys(attendanceData).filter(k=>k.startsWith(String(p.id)+'|'));const dates=[...new Set(attendanceKeys.map(k=>k.slice(String(p.id).length+1).split('|')[0]))].sort();const wb=new ExcelJS.Workbook(),ws=wb.addWorksheet('Attendance');const headers=['SR No.','Name','Job Card Number','কাজের দিন'];const data=members.map((r,i)=>[i+1,r.name||'',r.jobCardNumber||'',dates.filter(d=>attendanceKeys.some(k=>k.startsWith(String(p.id)+'|'+d)&&attendanceData[k]?.[r.id]===true)).length]);styleExportSheet(ws,headers,data,'ATTENDANCE SUMMARY 2026',{1:'সর্বমোট সদস্য',4:members.length});await downloadWorkbook(wb,'Attendance_'+(p.name||'Project').replace(/[^a-z0-9-_ ]/gi,'_').trim().replace(/\s+/g,'_')+'.xlsx');};
