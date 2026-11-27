@@ -31,6 +31,8 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 .code-sort-handle:active{cursor:grabbing}
 #projectCodeModalContent tr.code-row-dragging{opacity:.45}
 #projectCodeModalContent tr.code-row-over{outline:2px dashed #ff9933;outline-offset:-2px;background:#fff0d9}
+
+.project-date-edit{margin-top:12px;padding:12px;border:1px dashed #f59e0b;border-radius:10px;background:#fffaf0}
 </style></head><body>
 <header><h1>SAHARA BOOTH</h1><p style="font-size:16px;font-weight:bold;letter-spacing:1px">JOB CARD NUMBER 2026</p></header>
 <nav class="tabbar" role="tablist"><button type="button" class="tabbtn active" id="dataTabBtn" role="tab" aria-selected="true">📋 Data Entry & List</button><button type="button" class="tabbtn" id="demandTabBtn" role="tab" aria-selected="false">🗂️ Project Demand</button></nav>
@@ -69,6 +71,11 @@ button{border:0;border-radius:8px;padding:11px 14px;font-weight:bold;cursor:poin
 <div><label for="createProjectSupervisor">এই Project-এর Supervisor নির্বাচন করুন</label><select id="createProjectSupervisor" style="width:100%;padding:11px;border:1px solid #ffcc80;border-radius:8px;font-size:16px;background:white"><option value="">আগে Data Entry ট্যাব থেকে Supervisor যোগ করুন</option></select></div>
 <div style="display:flex;align-items:end"><button class="green" id="createProjectBtn">＋ Project তৈরি করুন</button></div>
 <div><label for="projectSelect">Project নির্বাচন করুন</label><select id="projectSelect" style="width:100%;padding:11px;border:1px solid #ffcc80;border-radius:8px;font-size:16px;background:white"></select></div>
+</div>
+<div class="project-date-edit">
+ <div style="font-weight:bold;color:#92400e;margin-bottom:8px">📅 Project-এর কাজের সময়সীমা পরিবর্তন করুন</div>
+ <div class="grid"><div><label for="extendProjectToDate">নতুন শেষের তারিখ (To Date)</label><input id="extendProjectToDate" type="date"></div><div><button type="button" class="green" id="extendProjectDateBtn">সময় পরিবর্তন / সংরক্ষণ</button></div></div>
+ <p class="note" style="margin:7px 0 0">শুরুর তারিখ অপরিবর্তিত থাকবে। কাজের প্রয়োজন অনুযায়ী শেষের তারিখ বাড়াতে বা কমাতে পারবেন। পুরোনো হাজিরা ও Demand অপরিবর্তিত থাকবে।</p>
 </div>
 <div class="project-code-area" style="margin-top:12px;border:1px solid #ffcc80;border-radius:10px;padding:12px;background:#fffdf9">
  <div style="font-weight:bold;margin-bottom:6px">Master Roll Code List — Code-এ ক্লিক করে সদস্য দেখুন</div>
@@ -137,7 +144,7 @@ function saveProjects(){renderProjects();render();if(projectsFirebaseReady)syncP
 function syncProjectsToFirebase(){const snapshot=JSON.stringify(projects);projectSyncInProgress=true;projectSyncChain=projectSyncChain.then(async()=>{const response=await fetch(FIREBASE_PROJECTS_URL,{method:"PUT",headers:{"Content-Type":"application/json"},body:snapshot});if(!response.ok)throw Error("HTTP "+response.status);}).catch(e=>{$("firebaseStatus").textContent="⚠️ Project Sync হয়নি—Internet/Rules পরীক্ষা করুন।";}).finally(()=>{projectSyncInProgress=false;});return projectSyncChain;}
 async function initializeProjectsFirebase(){try{const response=await fetch(FIREBASE_PROJECTS_URL,{cache:"no-store"});if(!response.ok)throw Error("HTTP "+response.status);const remote=await response.json();if(Array.isArray(remote)){projects=migrateProjectMemberKeys(remote);}else{const put=await fetch(FIREBASE_PROJECTS_URL,{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(projects)});if(!put.ok)throw Error("HTTP "+put.status);}renderProjects();projectsFirebaseReady=true;setInterval(async()=>{try{if(projectSyncInProgress)return;const r=await fetch(FIREBASE_PROJECTS_URL,{cache:"no-store"});if(!r.ok)return;const latest=await r.json();if(Array.isArray(latest)){const normalized=migrateProjectMemberKeys(latest);if(JSON.stringify(normalized)!==JSON.stringify(projects)){projects=normalized;renderProjects();}}}catch(e){}},5000);}catch(e){renderProjects();}}
 function currentProject(){return projects.find(p=>p.id===selectedProjectId)||null;}
-function renderProjects(){const select=$("projectSelect");if(!select)return;const old=selectedProjectId;select.innerHTML=projects.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");if(projects.some(p=>p.id===old))select.value=old;else selectedProjectId=projects[0]?.id||"";renderSupervisorOptions();refreshProjectCodeFilter();renderProjectMembersPicker();renderCurrentProject();renderAttendanceCodeCards();}
+function renderProjects(){const select=$("projectSelect");if(!select)return;const old=selectedProjectId;select.innerHTML=projects.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");if(projects.some(p=>p.id===old))select.value=old;else selectedProjectId=projects[0]?.id||"";renderSupervisorOptions();refreshProjectCodeFilter();renderProjectMembersPicker();renderCurrentProject();renderAttendanceCodeCards();renderAttendance();syncProjectDateEditor();}
 function allSupervisorIds(){const ids=new Set(rows.filter(r=>r.isSupervisor).map(r=>r.id));projects.forEach(p=>{if(p.supervisorId)ids.add(p.supervisorId);});return ids;}
 function registeredSupervisors(){const ids=allSupervisorIds();return rows.filter(r=>ids.has(r.id));}
 function renderSupervisorOptions(){const select=$("createProjectSupervisor");if(!select)return;const old=select.value;const list=registeredSupervisors();select.innerHTML='<option value="">Supervisor নির্বাচন করুন</option>'+list.map(r=>`<option value="${esc(r.id)}">${esc(r.name)} — ${esc(r.jobCardNumber)}</option>`).join("");if(list.some(r=>r.id===old))select.value=old;}
@@ -246,7 +253,7 @@ window.removeProjectMember=memberId=>{const p=currentProject();if(!p)return;cons
 $("projectTbody").addEventListener("click",e=>{const btn=e.target.closest("button[data-remove-member]");if(!btn)return;removeProjectMember(btn.getAttribute("data-remove-member"));});
 $("projectMemberSearch").addEventListener("input",renderCurrentProject);
 $("createProjectBtn").onclick=()=>{const name=$("projectName").value.trim();const fromDate=$("projectFromDate").value;const toDate=$("projectToDate").value;const supervisorId=$("createProjectSupervisor").value;if(!name){alert("Project-এর নাম লিখুন।");return;}if(!supervisorId){alert("এই Project-এর জন্য Supervisor নির্বাচন করুন। আগে Data Entry ট্যাব থেকে Supervisor যোগ করুন।");return;}if(!allSupervisorIds().has(supervisorId)){alert("নির্বাচিত ব্যক্তি Supervisor তালিকায় নেই।");return;}if(fromDate&&toDate&&fromDate>toDate){alert("শেষের তারিখ শুরুর তারিখের আগে হতে পারে না।");return;}const p={id:"p"+Date.now(),name,fromDate,toDate,supervisorId,completed:false,members:[]};projects.unshift(p);selectedProjectId=p.id;$("projectName").value="";$("projectFromDate").value="";$("projectToDate").value="";$("createProjectSupervisor").value="";saveProjects();};
-$("projectSelect").onchange=e=>{selectedProjectId=e.target.value;renderProjectMembersPicker();renderCurrentProject();renderSupervisorOptions();renderAttendance();};
+$("projectSelect").onchange=e=>{selectedProjectId=e.target.value;renderProjectMembersPicker();renderCurrentProject();renderSupervisorOptions();renderAttendance();syncProjectDateEditor();};
 $("supervisorRegistrySearch").addEventListener("input",renderSupervisorRegistry);
 $("supervisorRegistrySelect").addEventListener("change",renderSupervisorRegistry);
 $("makeSupervisorBtn").onclick=()=>{const id=$("supervisorRegistrySelect").value;const r=rows.find(x=>x.id===id);if(!r)return alert("Search করে সদস্য নির্বাচন করুন।");const assigned=projects.find(p=>p.supervisorId===id);if(assigned){alert("এই ব্যক্তি ইতিমধ্যে ‘"+assigned.name+"’ Project-এর Supervisor।");return;}const worker=projects.find(p=>!p.completed&&(p.members||[]).includes(id));if(worker){alert("এই ব্যক্তি ‘"+worker.name+"’ Project-এর কাজের সদস্য। আগে তাঁকে ওই Project থেকে বাদ দিন, তারপর Supervisor করুন।");return;}r.isSupervisor=true;render();if(firebaseReady)syncToFirebase();renderSupervisorRegistry();renderSupervisorOptions();renderProjectMembersPicker();alert(r.name+"-কে Supervisor হিসেবে যোগ করা হয়েছে। এখন থেকে তিনি কাজের সদস্য নন এবং Excel সদস্য তালিকায় থাকবেন না।");};
@@ -380,6 +387,8 @@ function getCurrentAttendanceMap(p,date){
 }
 function renderCodeAttendanceSummary(){ /* মূল checkbox হাজিরা তালিকাই রাখা হয়েছে; দ্বিতীয় তালিকা দেখানো হবে না। */ }
 
+function syncProjectDateEditor(){const p=currentProject(),input=$('extendProjectToDate');if(!input)return;input.value=p?.toDate||'';input.min=p?.fromDate||'';input.max='';input.disabled=!p;}
+$('extendProjectDateBtn').onclick=()=>{const p=currentProject();if(!p)return alert('আগে Project নির্বাচন করুন।');const next=$('extendProjectToDate').value;if(!next)return alert('নতুন শেষের তারিখ নির্বাচন করুন।');if(p.fromDate&&next<p.fromDate)return alert('শেষের তারিখ শুরুর তারিখের আগে হতে পারে না।');if(next===p.toDate)return alert('এই তারিখই বর্তমানে শেষের তারিখ হিসেবে আছে।');const action=p.toDate&&next<p.toDate?'কমিয়ে':'বাড়িয়ে';if(!confirm('“'+p.name+'” Project-এর শেষের তারিখ '+(p.toDate||'নির্ধারিত নয়')+' থেকে '+next+' করা হবে (সময় '+action+')। শুরুর তারিখ, আগের হাজিরা ও Demand অপরিবর্তিত থাকবে। এগোবেন?'))return;p.toDate=next;saveProjects();syncProjectDateEditor();alert('Project-এর সময়সীমা পরিবর্তন করা হয়েছে।');};
 function renderAttendance(){
  const p=currentProject(),date=$('attendanceDate')?.value||'',body=$('attendanceTbody');
  renderAttendanceCodeCards();updateAttendanceLifetimeTotal();
